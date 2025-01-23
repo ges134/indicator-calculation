@@ -1,0 +1,37 @@
+# This GitHub workflow allows a CI pipeline for the indicator collection
+# program.
+# The workflow does the following steps:
+# 1. Install dependencies
+# 2. Run the linter
+# 3. Run tests
+# 4. Upload test results to codecov.
+
+name: CI Workflow
+
+on: [push, workflow_dispatch]
+
+jobs:
+  ci:
+    name: "CI"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: action/checkout@v4
+      - name: Setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: "Install necessary tools"
+        run: pip install pipenv
+      - name: "Install dependencies"
+        run: pipenv install --dev
+      - name: "Lint the program"
+        run: pipenv run python lint.py
+      - name: "Run tests"
+        run: |
+          pipenv run coverage run -m unittest discover
+          pipenv run coverage xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
