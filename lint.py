@@ -24,6 +24,8 @@ def lint_component():
     files = [
         'main.py',
         'lint.py',
+        'merger.py',
+        'data.py',
         'tests/test_merger.py'
     ]
     scores = []

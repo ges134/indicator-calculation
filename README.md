@@ -8,6 +8,8 @@ The README page gives information on the program structure and usage. It stats w
 
 The project was build using [Pyton 3.12](https://www.python.org/) and [Pipenv](https://pypi.org/project/pipenv/). Both should be installed before the first usage of this program.
 
+The program will need a `codes.txt` file in the `data/` repository. There should be one code per line in the file. The codes should also be available in the statistics API of Eurostat. A `codes.template.txt` file is given as a starting point to use the program.
+
 To run the project, the dependencies should be installed first with the following command:
 
 ```sh
@@ -24,4 +26,9 @@ pipenv run py main.py
 
 ## Program flow
 
-A typical usage will query eurostat databases. Then, it will merge all the datasets into a single one.
+The program flow will parse each indicator in the `codes` file. Each indicator gets the following treatment:
+
+1. The dataset is loaded from the Eurostat database and converted into a `Dataframe`.
+1. The dataset is tested for merging conditions. A dataset can be merged if it has a annual time stamp, a geopolitical entity, a unit of measure and a time.
+
+Further developments will give more instructions in the program flow.

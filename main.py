@@ -5,14 +5,28 @@ A typical program execution will query Eurostat databases and merge the
 collected datasets into one file. The program will then save the file.
 """
 
+from merger import merge_datasets
+from data import load_file
+
 def main():
     """
     Main execution of the program.
     """
 
-    print('Programme de collecte de données associées aux indicateurs')
-    print('Ce programme collecte tous les jeux de données considérés pour le volet indicateurs.')
-    print('Ce programme est en cours de développement')
+    print('Indicator data collection program')
+    print('This program collects all datasets need to complete the indicator axis')
+    print('This program is still under development')
+
+    print('Reading indicator codes')
+    codes_raw = load_file('codes.txt')
+    codes = [c for c in codes_raw.split('\n') if c != '']
+
+    print('Merging datasets')
+    merge_list = merge_datasets(codes)
+
+    print('Datasets that will be merged')
+    print('This list will not be displayed in a next version of the program')
+    print(merge_list)
 
 if __name__ == '__main__':
     main()
