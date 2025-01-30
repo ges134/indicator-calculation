@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 tqdm = "*"
+pyjstat = "*"
+pandas = "*"
 
 [dev-packages]
 pylint = "*"
