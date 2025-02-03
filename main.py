@@ -22,11 +22,11 @@ def main():
     codes = [c for c in codes_raw.split('\n') if c != '']
 
     print('Merging datasets')
-    merge_list = merge_datasets(codes)
+    merged = merge_datasets(codes)
 
-    print('Datasets that will be merged')
-    print('This list will not be displayed in a next version of the program')
-    print(merge_list)
+    print('Merged dataset')
+    print('This dictionnary will not be displayed in a next version of the program')
+    print(merged)
 
 if __name__ == '__main__':
     main()
