@@ -30,5 +30,6 @@ The program flow will parse each indicator in the `codes` file. Each indicator g
 
 1. The dataset is loaded from the Eurostat database and converted into a `Dataframe`.
 1. The dataset is tested for merging conditions. A dataset can be merged if it has a annual time stamp, a geopolitical entity, a unit of measure and a time.
+1. With the appropriate format, it scans each row and updates the merged dataset. New keys are created if they don't exists.
 
 Further developments will give more instructions in the program flow.

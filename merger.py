@@ -8,7 +8,7 @@ from pandas import DataFrame
 
 from data import load_dataset
 
-def merge_datasets(codes: List[str]) -> List[Dict]:
+def merge_datasets(codes: List[str]) -> Dict:
     """
     This function applies the dataset merging from the `codes` provided
     in the parameter. This is the central function of merging.
@@ -23,6 +23,8 @@ def merge_datasets(codes: List[str]) -> List[Dict]:
     1. Load the dataset and convert it into a `DataFrame`
     2. Check if the dataset is of appropriate format. If not, the computing
     stops there for this dataset.
+    3. With the appropriate format, it scans each row and updates the merged
+    dataset. New keys are created if they don't exists.
 
     Args:
         codes: The dataset codes to be merged into one dataset.
@@ -33,17 +35,33 @@ def merge_datasets(codes: List[str]) -> List[Dict]:
         a temporary return to test data parsing.
     """
 
-    datasets_will_be_merged = []
+    merged = {}
+
     for code in tqdm(
         codes,
         'Computation of datasets',
         leave=False
     ):
         dataframe = load_dataset(code)
-        datasets_will_be_merged.append(dataset_can_be_merged(dataframe))
+        if dataset_can_be_merged(dataframe):
+            unit_of_measure = dataframe['Unit of measure'][0]
+            for row in tqdm(
+                dataframe[dataframe['Unit of measure'] == unit_of_measure].itertuples(),
+                f'Merging dataset {code}',
+                leave=False
+            ):
+                geopolitical_column_location = dataframe.columns.get_loc(
+                    'Geopolitical entity (reporting)'
+                )
+                row_key = f'{row[geopolitical_column_location+1]}-{row.Time}'
+                if row_key not in merged:
+                    merged[row_key]= {
+                        'values': {}
+                    }
 
-    # Temporary return.
-    return datasets_will_be_merged
+                merged[row_key]['values'][code] = row.value
+
+    return merged
 
 def dataset_can_be_merged(dataframe: DataFrame) -> bool:
     """
