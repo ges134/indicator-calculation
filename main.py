@@ -5,8 +5,8 @@ A typical program execution will query Eurostat databases and merge the
 collected datasets into one file. The program will then save the file.
 """
 
-from merger import merge_datasets
-from data import load_file
+from merger import merge_datasets, merged_dataset_to_csv
+from data import load_file, save_merged_dataset
 
 def main():
     """
@@ -24,9 +24,9 @@ def main():
     print('Merging datasets')
     merged = merge_datasets(codes)
 
-    print('Merged dataset')
-    print('This dictionnary will not be displayed in a next version of the program')
-    print(merged)
+    print('Saving merged dataset')
+    merged_csv = merged_dataset_to_csv(merged, codes)
+    save_merged_dataset(merged_csv)
 
 if __name__ == '__main__':
     main()

@@ -2,9 +2,10 @@
 This module ensures that all the indicators' datasets are merged into one.
 """
 
-from typing import List, Dict
+from typing import List, Dict, Union
 from tqdm import tqdm
 from pandas import DataFrame
+from math import isnan
 
 from data import load_dataset
 
@@ -30,9 +31,10 @@ def merge_datasets(codes: List[str]) -> Dict:
         codes: The dataset codes to be merged into one dataset.
     
     Returns:
-        A list of flags indicating which dataset will be computed and merged.
-        The order follows the same order as the `codes` parameters. This is
-        a temporary return to test data parsing.
+        A dictionary with the merged datasets. Each entry in this dictionary has a key 
+        with the country and the year of reporting, separated by a semi-colomn (;). Inside, another
+        dictionnary with the values is stored. The values can be accessed with the `value` key.  
+        In this dictionnary, the indicator code is the key and the indicator value is in the value.
     """
 
     merged = {}
@@ -53,7 +55,7 @@ def merge_datasets(codes: List[str]) -> Dict:
                 geopolitical_column_location = dataframe.columns.get_loc(
                     'Geopolitical entity (reporting)'
                 )
-                row_key = f'{row[geopolitical_column_location+1]}-{row.Time}'
+                row_key = f'{row[geopolitical_column_location+1]};{row.Time}'
                 if row_key not in merged:
                     merged[row_key]= {
                         'values': {}
@@ -87,3 +89,35 @@ def dataset_can_be_merged(dataframe: DataFrame) -> bool:
     ):
         return False
     return True
+
+def merged_dataset_to_csv(merged: Dict, codes: List[str]) -> List[List[Union[str, float]]]:
+    """
+    Converts the merged dataset into a CSV-ready list for data saving.
+
+    The merged dataset can be generated with the `merge_datasets` method of this module.
+
+    Args:
+        merged: The dictionnary containing the merged dataset.
+        codes: The dataset codes to be merged into one dataset.
+
+    Returns:
+        A CSV-ready list of the merged datasets. This list can be saved into a file with the
+        `data.save_merged_dataset` method.
+    """
+
+    parsed_csv = [['Country', 'Year'] + codes]
+
+    for key, entry in tqdm(
+        merged.items(),
+        'Conversion of dataset into a CSV file',
+        leave=False
+    ):
+        country, year = key.split(';')
+        row = [country, year] + [''] * len(codes)
+        for indicator, value in entry['values'].items():
+            index = codes.index(indicator)
+            row[index+2] = '' if isnan(value) else value
+
+        parsed_csv.append(row)
+
+    return parsed_csv
