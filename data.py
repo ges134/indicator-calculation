@@ -5,6 +5,8 @@ the results.
 
 from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
+from typing import List, Union
+from csv import writer
 
 def load_dataset(code: str) -> DataFrame:
     """
@@ -40,3 +42,17 @@ def load_file(filepath: str) -> str:
     """
     with open(f'./data/{filepath}', encoding='utf-8') as file:
         return file.read()
+
+def save_merged_dataset(data: List[List[Union[str, float]]]):
+    """
+    Saves the CSV-ready merged dataset into the `data/` folder.
+
+    The saved file will be available in `data/merged.csv`.
+
+    Args:
+        data: The CSV data. Use the `merger.merged_dataset_to_csv` method to generate the
+            adequate data.
+    """
+    with open('./data/merged.csv', 'w', encoding='utf-8', newline='') as file_stream:
+        csv_writer = writer(file_stream)
+        csv_writer.writerows(data)
