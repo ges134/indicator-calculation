@@ -5,8 +5,8 @@ A typical program execution will query Eurostat databases and merge the
 collected datasets into one file. The program will then save the file.
 """
 
-from merger import merge_datasets, merged_dataset_to_csv
-from data import load_file, save_merged_dataset
+from merger import merge_datasets, merged_dataset_to_csv, units_to_csv
+from data import load_file, save_csv, transform_units_from_file
 
 def main():
     """
@@ -21,12 +21,20 @@ def main():
     codes_raw = load_file('codes.txt')
     codes = [c for c in codes_raw.split('\n') if c != '']
 
+    print('Reading default unit of measures')
+    units_raw = load_file('units.txt')
+    units = transform_units_from_file(units_raw)
+
     print('Merging datasets')
-    merged = merge_datasets(codes)
+    merged, units = merge_datasets(codes, units)
 
     print('Saving merged dataset')
     merged_csv = merged_dataset_to_csv(merged, codes)
-    save_merged_dataset(merged_csv)
+    save_csv(merged_csv, 'merged.csv')
+
+    print('Saving units of measure')
+    units_csv = units_to_csv(units)
+    save_csv(units_csv, 'units.csv')
 
 if __name__ == '__main__':
     main()

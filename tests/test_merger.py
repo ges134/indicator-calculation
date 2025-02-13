@@ -8,7 +8,7 @@ from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
 from math import isnan
 
-from merger import merge_datasets, dataset_can_be_merged, merged_dataset_to_csv
+from merger import merge_datasets, dataset_can_be_merged, merged_dataset_to_csv, units_to_csv
 from data import load_file
 
 UNIT_OF_MEASURE_LABEL = 'Euro per kilogram, chain linked volumes (2015)'
@@ -39,8 +39,12 @@ class MergerTests(TestCase):
             cei_pc034_dataframe
         ]
 
+        units_input = {
+            'cei_pc030': 'Euro per kilogram, chain linked volumes (2015)'
+        }
+
         # Act
-        results = merge_datasets(['cei_pc020', 'cei_pc030', 'cei_pc034'])
+        results, units = merge_datasets(['cei_pc020', 'cei_pc030', 'cei_pc034'], units_input)
 
         # assert
         load_dataset_mock.assert_any_call('cei_pc020')
@@ -88,6 +92,10 @@ class MergerTests(TestCase):
                 verified_row_keys.append(row_key)
 
         self.assertEqual(len(results), len(verified_row_keys))
+        self.assertEqual(3, len(units))
+        self.assertEqual('Tonnes per capita', units['cei_pc020'])
+        self.assertEqual('Euro per kilogram, chain linked volumes (2015)', units['cei_pc030'])
+        self.assertEqual('Kilograms per capita', units['cei_pc034'])
 
 
     def test_dataset_can_be_merged(self):
@@ -169,7 +177,7 @@ class MergerTests(TestCase):
         ]
         codes = ['cei_pc020', 'cei_pc030', 'cei_pc034']
 
-        merged = merge_datasets(codes)
+        merged, _ = merge_datasets(codes, {})
 
         # Act
         results = merged_dataset_to_csv(merged, codes)
@@ -226,3 +234,43 @@ class MergerTests(TestCase):
 
         self.assertEqual(len(results)-1, len(verified_row_keys))
         self.assertTrue(all(len(row) == 5 for row in results))
+
+    @patch('merger.load_dataset')
+    def test_units_to_csv(self, load_dataset_mock: Mock):
+        """
+        This method tests the `units_to_csv` under the nominal scenario.
+        """
+
+        # Arrange
+        cei_pc020_stub = Dataset.read(load_file('tests/cei_pc020.json'))
+        cei_pc030_stub = Dataset.read(load_file('tests/cei_pc030.json'))
+        cei_pc034_stub = Dataset.read(load_file('tests/cei_pc034.json'))
+
+        cei_pc020_dataframe = cei_pc020_stub.write('dataframe')
+        cei_pc030_dataframe = cei_pc030_stub.write('dataframe')
+        cei_pc034_dataframe = cei_pc034_stub.write('dataframe')
+
+        load_dataset_mock.side_effect =  [
+            cei_pc020_dataframe,
+            cei_pc030_dataframe,
+            cei_pc034_dataframe
+        ]
+        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034']
+        units_input = {
+            'cei_pc030': 'Euro per kilogram, chain linked volumes (2015)'
+        }
+
+        _, units = merge_datasets(codes, units_input)
+
+        # Act
+        results = units_to_csv(units)
+
+        # Assert
+        self.assertEqual(4, len(results))
+        self.assertTrue(all(len(row) == 2 for row in results))
+        self.assertEqual('cei_pc030', results[1][0])
+        self.assertEqual('cei_pc020', results[2][0])
+        self.assertEqual('cei_pc034', results[3][0])
+        self.assertEqual('Euro per kilogram, chain linked volumes (2015)', results[1][1])
+        self.assertEqual('Tonnes per capita', results[2][1])
+        self.assertEqual('Kilograms per capita', results[3][1])

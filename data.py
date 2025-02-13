@@ -5,8 +5,10 @@ the results.
 
 from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
-from typing import List, Union
+from typing import List, Union, Dict
 from csv import writer
+
+from tqdm import tqdm
 
 def load_dataset(code: str) -> DataFrame:
     """
@@ -43,16 +45,41 @@ def load_file(filepath: str) -> str:
     with open(f'./data/{filepath}', encoding='utf-8') as file:
         return file.read()
 
-def save_merged_dataset(data: List[List[Union[str, float]]]):
+def save_csv(data: List[List[Union[str, float]]], filepath: str):
     """
-    Saves the CSV-ready merged dataset into the `data/` folder.
-
-    The saved file will be available in `data/merged.csv`.
+    Saves a CSV-ready variable into the `data/` folder.
 
     Args:
-        data: The CSV data. Use the `merger.merged_dataset_to_csv` method to generate the
-            adequate data.
+        data: The CSV data ready to be merged.
+        filepath: The path of the file, relative to the data repository.
+        If a file is in a subdirectory, the subdirectory should also be included.
+        The `.csv` extension should be included in the file path.
     """
-    with open('./data/merged.csv', 'w', encoding='utf-8', newline='') as file_stream:
+    with open(f'./data/{filepath}', 'w', encoding='utf-8', newline='') as file_stream:
         csv_writer = writer(file_stream)
         csv_writer.writerows(data)
+
+def transform_units_from_file(units_raw: str) -> Dict:
+    """
+    Transforms the units of measure file into a dictionnary used to compile units of measures.
+
+    Args:
+        units_raw: The read file of the units of measure files.
+
+    Returns:
+        A dictionnary with the selected unit of measures. Each key in this dictionnary represents
+        the code of an indicator and the value represents the selected unit of measure for this
+        indicator.
+    """
+
+    units_line = [u for u in units_raw.split('\n') if u != '']
+    units = {}
+    for line in tqdm(
+        units_line,
+        'Conversion of units',
+        leave=False
+    ):
+        indicator, unit = line.split(' UNIT ')
+        units[indicator] = unit
+
+    return units
