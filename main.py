@@ -1,8 +1,11 @@
 """
-The main module contains the main program of the indicator collector.
+The main module contains the main program of the indicator calculation.
 
-A typical program execution will query Eurostat databases and merge the
-collected datasets into one file. The program will then save the file.
+A typical program execution will query Eurostat databases, merge the collected datasets into one
+dictionnary and compute elements necessary for the integrated subjective-objective approach. Note
+that only the degree of independance for aggregation and the subjective approach is computed by the
+program. The remainder should be set up in a spreadsheet software. All generated data by the program
+is saved into a file.
 """
 
 from merger import merge_datasets, merged_dataset_to_csv, units_to_csv
