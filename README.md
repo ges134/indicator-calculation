@@ -1,6 +1,6 @@
-# Indicator collection
+# Indicator calculation
 
-The indicator collection program queries Eurostat databases for selected indicator datasets and then merges them into a single file for results analysis.
+The indicator calculationa program queries Eurostat databases for selected indicator datasets, merges them into a single file for results analysis and then computes some elements of the integrated objective-subjective approach. The elements computed are the degree of indenpendance and the AHP.
 
 The README page gives information on the program structure and usage. It stats with a get-started guide and a usage guide. This page then presents the program flow.
 
