@@ -1,0 +1,30 @@
+[
+  {
+    "id": "EMA",
+    "code": "cei_pc020"
+  },
+  {
+    "id": "PDR",
+    "code": "cei_pc030",
+    "Unit of measure": "Euro per kilogram, chain linked volumes (2015)"
+  },
+  {
+    "id": "GMR",
+    "code": "cei_pc034"
+  },
+  {
+    "id": "TRP",
+    "code": "sdg_01_10",
+    "Age class": "Total",
+    "Unit of measure": "Thousand persons"
+  },
+  {
+    "id": "NDE",
+    "code": "sdg_06_40"
+  },
+  {
+    "id": "PMS",
+    "code": "sdg_03_42",
+    "Type of mortality": "Preventable mortality"
+  }
+]

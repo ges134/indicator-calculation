@@ -1,6 +1,0 @@
-cei_pc020
-cei_pc030
-cei_pc034
-sdg_01_10
-sdg_06_40
-sdg_03_42
