@@ -26,8 +26,7 @@ def lint_component():
         'lint.py',
         'merger.py',
         'data.py',
-        'tests/test_merger.py',
-        'tests/test_data.py'
+        'tests/test_merger.py'
     ]
     scores = []
 

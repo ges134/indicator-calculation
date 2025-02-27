@@ -2,14 +2,14 @@
 This module ensures that all the indicators' datasets are merged into one.
 """
 
-from typing import List, Dict, Union, Tuple
+from typing import List, Dict, Union
 from tqdm import tqdm
 from pandas import DataFrame
 from math import isnan
 
 from data import load_dataset
 
-def merge_datasets(codes: List[str], units: Dict) -> Tuple[Dict, Dict]:
+def merge_datasets(config: List[Dict]) -> Dict:
     """
     This function applies the dataset merging from the `codes` provided in the parameter. This is
     the central function of merging.
@@ -24,43 +24,35 @@ def merge_datasets(codes: List[str], units: Dict) -> Tuple[Dict, Dict]:
     created if they don't exists.
 
     Args:
-        codes: The dataset codes to be merged into one dataset.
-        units: A dictionnary of units of measures that were preselected. If, for a given code, there
-            is a unit of measure in the `units` dictionnary, the method will use the specified unit
-            of measure. Otherwise, the first unit of measure reported in the dataset will be used. A
-            compiled list of units of measure is returned by this method.
+        config: The configuration file for this program execution. It should provide an identifier,
+            an Eurostat data code and the necessary specifications to read multiple dimensions. For
+            instance, if there is multiple units of measure for one dataset, the configuration 
+            should specify which unit to choose.
     
     Returns:
-        A tuple containing the merged datasets and the compiled units of measure. In the merged
-        dataset dictionnary, each entry has a key with the country and the year of reporting, 
-        separated by a semi-colomn (;). Inside, another dictionnary with the values is stored. The
-        values can be accessed with the `value` key. In this dictionnary, the indicator code is the 
-        key and the indicator value is in the value. In the compiled units of measure dictionnary,
-        each each entry is the code of the indicator and the value represents the reported unit of
-        measure. If the unit was specified by the `units` argument, this value will remain the same
-        in this dictionnary.
+        A dictionnary with the merged datasets. In this dictionnary, each entry has a key with the
+        country and the year of reporting, separated by a semi-colomn (;). Inside, another
+        dictionnary with the values is stored. The values can be accessed with the `value` key. In 
+        this dictionnary, the indicator code is the key and the indicator value is in the value.
     """
 
     merged = {}
-    units_final = units.copy()
 
-    for code in tqdm(
-        codes,
+    for indicator in tqdm(
+        config,
         'Computation of datasets',
         leave=False
     ):
+        code = indicator['code']
+        id = indicator['id']
         dataframe = load_dataset(code)
         if dataset_can_be_merged(dataframe):
-            unit_of_measure = units[code] \
-                if code in units_final \
-                else dataframe['Unit of measure'][0]
+            dimensions = [d for d in indicator.keys() if d not in ('id', 'code')]
 
-            units_final[code] = unit_of_measure
-            for row in tqdm(
-                dataframe[dataframe['Unit of measure'] == unit_of_measure].itertuples(),
-                f'Merging dataset {code}',
-                leave=False
-            ):
+            for dimension in tqdm(dimensions, f'Preparing indicator {id} for merge', leave=False):
+                dataframe = dataframe[dataframe[dimension] == indicator[dimension]]
+
+            for row in tqdm(dataframe.itertuples(), f'Merging indicator {code}', leave=False):
                 geopolitical_column_location = dataframe.columns.get_loc(
                     'Geopolitical entity (reporting)'
                 )
@@ -70,15 +62,15 @@ def merge_datasets(codes: List[str], units: Dict) -> Tuple[Dict, Dict]:
                         'values': {}
                     }
 
-                merged[row_key]['values'][code] = row.value
+                merged[row_key]['values'][id] = row.value
 
-    return merged, units_final
+    return merged
 
 def dataset_can_be_merged(dataframe: DataFrame) -> bool:
     """
     This function checks if the data frame given in the `dataframe` parameter 
     can be merged. A data frame can be merged if there is a annual time frequency
-    and if the unit of measure, geopolitical entity and time columns are on the dataset.
+    and if the geopolitical entity and time columns are on the dataset.
 
     Args:
         dataframe: The dataframe to test.
@@ -92,14 +84,13 @@ def dataset_can_be_merged(dataframe: DataFrame) -> bool:
     ):
         return False
     if (
-        'Unit of measure' not in dataframe.columns
-        or 'Geopolitical entity (reporting)' not in dataframe.columns
+        'Geopolitical entity (reporting)' not in dataframe.columns
         or 'Time' not in dataframe.columns
     ):
         return False
     return True
 
-def merged_dataset_to_csv(merged: Dict, codes: List[str]) -> List[List[Union[str, float]]]:
+def merged_dataset_to_csv(merged: Dict, config: List[Dict]) -> List[List[Union[str, float]]]:
     """
     Converts the merged dataset into a CSV-ready list for data saving.
 
@@ -107,13 +98,14 @@ def merged_dataset_to_csv(merged: Dict, codes: List[str]) -> List[List[Union[str
 
     Args:
         merged: The dictionnary containing the merged dataset.
-        codes: The dataset codes to be merged into one dataset.
+        config: The configuration file of this program execution.
 
     Returns:
         A CSV-ready list of the merged datasets. This list can be saved into a file with the
         `data.save_csv` method.
     """
 
+    codes = [c['id'] for c in config]
     parsed_csv = [['Country', 'Year'] + codes]
 
     for key, entry in tqdm(
@@ -122,35 +114,11 @@ def merged_dataset_to_csv(merged: Dict, codes: List[str]) -> List[List[Union[str
         leave=False
     ):
         country, year = key.split(';')
-        row = [country, year] + [''] * len(codes)
+        row = [country, year] + [''] * len(config)
         for indicator, value in entry['values'].items():
             index = codes.index(indicator)
             row[index+2] = '' if isnan(value) else value
 
         parsed_csv.append(row)
-
-    return parsed_csv
-
-def units_to_csv(units: Dict) -> List[List[str]]:
-    """
-    Converts the compiled units of measure into a CSV-ready list for data saving.
-
-    The compiled units of measure can be generated with the `merge_datasets` method of this module.
-
-    Args:
-        units: The dictionnary containing the compiled units.
-
-    Returns:
-        A CSV-ready list of the compiled units of measure. This list can be saved into a file with
-        the `data.save_csv` method.
-    """
-
-    parsed_csv = [['Indicator code', 'Unit of measure']]
-    for code in tqdm(
-        units,
-        'Conversion of units into a CSV file',
-        leave=False
-    ):
-        parsed_csv.append([code, units[code]])
 
     return parsed_csv

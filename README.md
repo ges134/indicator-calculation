@@ -8,11 +8,21 @@ The README page gives information on the program structure and usage. It stats w
 
 The project was build using [Pyton 3.12](https://www.python.org/) and [Pipenv](https://pypi.org/project/pipenv/). Both should be installed before the first usage of this program.
 
-The program will need a `codes.txt` file and a `units.txt` file in the `data/` repository.
+The program will need a `config.json` file in the `data/` repository. A sample `config.template.json` file is given as a starting point to use in the program. The configuration file is a list of objects. Each object has the following structure:
 
-The `codes.txt` file is used to know which indicator to query in the Eurostat API. In this file, there should be one code per line in the file. The codes should also be available in the statistics API of Eurostat. A `codes.template.txt` file is given as a starting point to use in the program.
+```json
+{
+  "id": "internal id",
+  "code": "eurostat code"
+  // A list of key-values for dimensions.
+}
+```
 
-The `units.txt` file is used to know which unit of measure to use when merging datasets. This file allows to select the unit of measure if the dataset reports data in multiple units. The input is optional. If omitted, the first reported dataset will be used. In this file, there should be one line per indicator. The structure of the line is as follows: `<indicator> UNIT <unit of measure>`. The `indicator` is the indicator code. The `unit of measure` is the label of the unit of measure to use. A `units.template.txt` is given as a starting point to use in the program.
+Where:
+
+- `id` (**Mandatory**): The identifier of the indicator to be collected. This identifier is internal and will be found again in the merged file.
+- `code` (**Mandatory**): The Eurostat identifier of this indicator.
+- `key-values-dimensions`: Each indicator should specify the different dimensions of data when there is more than one available option. It can be omitted when there is only one dimension. For instance, if the indicator reports multiple units of measures, the configuration file should have a key value `"Unit of measure": "Unit"`. On the Eurostat website, the _Customize your dataset_ shows the different dimensions. The dimensions _Time_, _Time Frequency_ and _Geopolitical entity (reporting)_ should be omitted too as they are checked by default in the program. If these columns are not available, the dataset will not be merged.
 
 To run the project, the dependencies should be installed first with the following command:
 
@@ -33,7 +43,8 @@ pipenv run py main.py
 The program flow will parse each indicator in the `codes` file. Each indicator gets the following treatment:
 
 1. The dataset is loaded from the Eurostat database and converted into a `Dataframe`.
-1. The dataset is tested for merging conditions. A dataset can be merged if it has a annual time stamp, a geopolitical entity, a unit of measure and a time. The unit of measure is registered to be saved afterwards.
+1. The dataset is tested for merging conditions. A dataset can be merged if it has a annual time stamp, a geopolitical entity and a time.
+1. The dataset is filtered to have a single dimension for every other dimensions according to the configuration file. For instance, if there is multiple units of measure, the program will use the one specified in the configuration file.
 1. With the appropriate format, it scans each row and updates the merged dataset. New keys are created if they don't exists.
 
-The crated dataset is then converted into a CSV file and saved into the `data/` repository. The compiled units of measure are also converted into a CSV file and saved into the `data/` repository.
+The crated dataset is then converted into a CSV file and saved into the `data/` repository.

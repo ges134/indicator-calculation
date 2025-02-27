@@ -7,8 +7,7 @@ from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
 from typing import List, Union, Dict
 from csv import writer
-
-from tqdm import tqdm
+from json import loads
 
 def load_dataset(code: str) -> DataFrame:
     """
@@ -45,6 +44,16 @@ def load_file(filepath: str) -> str:
     with open(f'./data/{filepath}', encoding='utf-8') as file:
         return file.read()
 
+def load_config() -> List[Dict]:
+    """
+    This functtion loads the config file that is stored locally. The config file should be provided
+    in the `data/repository`.
+
+    Returns:
+        The loaded configuration file.
+    """
+    return loads(load_file('config.json'))
+
 def save_csv(data: List[List[Union[str, float]]], filepath: str):
     """
     Saves a CSV-ready variable into the `data/` folder.
@@ -58,28 +67,3 @@ def save_csv(data: List[List[Union[str, float]]], filepath: str):
     with open(f'./data/{filepath}', 'w', encoding='utf-8', newline='') as file_stream:
         csv_writer = writer(file_stream)
         csv_writer.writerows(data)
-
-def transform_units_from_file(units_raw: str) -> Dict:
-    """
-    Transforms the units of measure file into a dictionnary used to compile units of measures.
-
-    Args:
-        units_raw: The read file of the units of measure files.
-
-    Returns:
-        A dictionnary with the selected unit of measures. Each key in this dictionnary represents
-        the code of an indicator and the value represents the selected unit of measure for this
-        indicator.
-    """
-
-    units_line = [u for u in units_raw.split('\n') if u != '']
-    units = {}
-    for line in tqdm(
-        units_line,
-        'Conversion of units',
-        leave=False
-    ):
-        indicator, unit = line.split(' UNIT ')
-        units[indicator] = unit
-
-    return units
