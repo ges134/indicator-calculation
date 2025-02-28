@@ -8,6 +8,7 @@ from pandas import DataFrame
 from typing import List, Union, Dict
 from csv import writer
 from json import loads
+from requests import get
 
 def load_dataset(code: str) -> DataFrame:
     """
@@ -24,7 +25,8 @@ def load_dataset(code: str) -> DataFrame:
         The parsed dataframe with the data of the given indicator.
     """
     url = f'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{code}'
-    dataset = Dataset.read(url)
+    response = get(url)
+    dataset = Dataset.read(response.text)
     return dataset.write('dataframe')
 
 def load_file(filepath: str) -> str:
