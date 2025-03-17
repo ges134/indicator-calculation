@@ -1,6 +1,6 @@
 # Indicator calculation
 
-The indicator calculationa program queries Eurostat databases for selected indicator datasets, merges them into a single file for results analysis and then computes some elements of the integrated objective-subjective approach. The elements computed are the degree of indenpendance and the AHP.
+The indicator calculation program queries Eurostat databases for selected indicator datasets, merges them into a single file for results analysis and then computes some elements of the integrated objective-subjective approach. The elements computed are the degree of indenpendance and the AHP.
 
 The README page gives information on the program structure and usage. It stats with a get-started guide and a usage guide. This page then presents the program flow.
 
@@ -47,4 +47,22 @@ The program flow will parse each indicator in the `codes` file. Each indicator g
 1. The dataset is filtered to have a single dimension for every other dimensions according to the configuration file. For instance, if there is multiple units of measure, the program will use the one specified in the configuration file.
 1. With the appropriate format, it scans each row and updates the merged dataset. New keys are created if they don't exists.
 
-The crated dataset is then converted into a CSV file and saved into the `data/` repository.
+The created dataset is then converted into a PCA-ready dataset. The program then does the following with the dataset:
+
+1. Compute the PCA for the indicators
+1. Compute the degrees of independance of the indicators.
+
+A degree of independance is a value between 0 and 1 that shows how a pair of indicators is independant from one another. This is made from the application that PC are uncorollated. Hence, the closer an indicator is to the value of 0, the more independant they are.
+
+## Saved data
+
+The program saves multiple results data. They are detailed below:
+
+- `angles.csv`: The angles computed between each indicators.
+- `eigen-values.csv`: The eigen values of each computed principal component.
+- `eigen-vectors.csv`: The eigen vectors of each computed principal component.
+- `explained-variance.csv`: The explained variance of each computed principal componenent.
+- `independance_degree.csv`: The degree of independance between each indicators.
+- `merged.csv`: The merged dataset.
+
+The angles and independances degree are in triangular format. Anything under the diagonal is unused.

@@ -2,7 +2,7 @@
 This module ensures that all the indicators' datasets are merged into one.
 """
 
-from typing import List, Dict, Union
+from typing import List, Dict
 from tqdm import tqdm
 from pandas import DataFrame
 from math import isnan
@@ -90,9 +90,9 @@ def dataset_can_be_merged(dataframe: DataFrame) -> bool:
         return False
     return True
 
-def merged_dataset_to_csv(merged: Dict, config: List[Dict]) -> List[List[Union[str, float]]]:
+def convert_dataset_to_dataframe(merged: Dict, config: List[Dict]) -> DataFrame:
     """
-    Converts the merged dataset into a CSV-ready list for data saving.
+    Converts the merged dataset into a Dataframe.
 
     The merged dataset can be generated with the `merge_datasets` method of this module.
 
@@ -101,12 +101,13 @@ def merged_dataset_to_csv(merged: Dict, config: List[Dict]) -> List[List[Union[s
         config: The configuration file of this program execution.
 
     Returns:
-        A CSV-ready list of the merged datasets. This list can be saved into a file with the
+        A dataframe of the merged datasets. This list can be saved into a file with the
         `data.save_csv` method.
     """
 
     codes = [c['id'] for c in config]
-    parsed_csv = [['Country', 'Year'] + codes]
+    colums = ['Country', 'Year'] + [c['id'] for c in config]
+    data = []
 
     for key, entry in tqdm(
         merged.items(),
@@ -114,11 +115,14 @@ def merged_dataset_to_csv(merged: Dict, config: List[Dict]) -> List[List[Union[s
         leave=False
     ):
         country, year = key.split(';')
-        row = [country, year] + [''] * len(config)
+        row = [country, int(year)] + [None] * len(config)
         for indicator, value in entry['values'].items():
             index = codes.index(indicator)
-            row[index+2] = '' if isnan(value) else value
+            row[index+2] = None if isnan(value) else value
 
-        parsed_csv.append(row)
+        data.append(row)
 
-    return parsed_csv
+    dataframe = DataFrame(data, columns=colums)
+    dataframe.sort_values(['Country', 'Year'])
+
+    return dataframe
