@@ -5,8 +5,7 @@ the results.
 
 from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
-from typing import List, Union, Dict
-from csv import writer
+from typing import List, Dict
 from json import loads
 from requests import get
 
@@ -25,7 +24,7 @@ def load_dataset(code: str) -> DataFrame:
         The parsed dataframe with the data of the given indicator.
     """
     url = f'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{code}'
-    response = get(url)
+    response = get(url, timeout=30)
     dataset = Dataset.read(response.text)
     return dataset.write('dataframe')
 
@@ -56,16 +55,14 @@ def load_config() -> List[Dict]:
     """
     return loads(load_file('config.json'))
 
-def save_csv(data: List[List[Union[str, float]]], filepath: str):
+def save_csv(dataframe: DataFrame, filepath: str):
     """
-    Saves a CSV-ready variable into the `data/` folder.
+    Saves a dataframe into the `data/` folder.
 
     Args:
-        data: The CSV data ready to be merged.
+        data: The Dataframe to be converted into a CSV File.
         filepath: The path of the file, relative to the data repository.
         If a file is in a subdirectory, the subdirectory should also be included.
         The `.csv` extension should be included in the file path.
     """
-    with open(f'./data/{filepath}', 'w', encoding='utf-8', newline='') as file_stream:
-        csv_writer = writer(file_stream)
-        csv_writer.writerows(data)
+    dataframe.to_csv(f'./data/{filepath}', index=False)

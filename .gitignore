@@ -172,5 +172,5 @@ cython_debug/
 
 # Others
 lint.txt
-data/merged.csv
+data/*.csv
 data/config.json
