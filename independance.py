@@ -5,7 +5,7 @@ to the eigen vector of the first two principal components, the more independant 
 allows also the computation of the PCA.
 """
 
-from numpy import array, corrcoef, abs, argmax, sign, newaxis, rad2deg, acos, dot
+from numpy import array, corrcoef, abs, argmax, sign, newaxis, rad2deg, acos, dot, mean, std
 from numpy.linalg import eig, norm
 from numpy.typing import NDArray
 from typing import Tuple
@@ -52,6 +52,10 @@ def apply_pca_on_indicators(
     # https://bagheri365.github.io/blog/Principal-Component-Analysis-from-Scratch/
     # Variable names are changed.
 
+    average = mean(data, axis=0)
+    standard_deviation = std(data, axis=0)
+    data = (data - average) / standard_deviation
+
     correlation_matrix = corrcoef(data.T)
     eigen_values, eigen_vectors = eig(correlation_matrix)
 
@@ -74,7 +78,7 @@ def apply_pca_on_indicators(
     eigen_values_total = sum(eigen_values)
     explained_variance = [(i / eigen_values_total) for i in eigen_values_sorted]
 
-    return eigen_values_sorted, eigen_vectors_sorted, explained_variance
+    return eigen_values_sorted, eigen_vectors_sorted.T, explained_variance
 
 def get_degrees_of_independance(eigen_vectors: NDArray) -> Tuple[NDArray, NDArray]:
     """
@@ -91,7 +95,7 @@ def get_degrees_of_independance(eigen_vectors: NDArray) -> Tuple[NDArray, NDArra
         the matrices are triangular, so `j >= i` to have results. On the other cases, the value
         `0.0` has no meaning.
     """
-    loading_vectors = eigen_vectors.T[:,:2]
+    loading_vectors = eigen_vectors[:,:2]
     angle_matrix = array([[0.0] * len(loading_vectors)] * len(loading_vectors))
     for i, loading_vector in tqdm(
         enumerate(loading_vectors),

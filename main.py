@@ -42,7 +42,7 @@ def main():
     eigen_values, eigen_vectors, explained_variance = apply_pca_on_indicators(indicators_data)
 
     eigen_values_dataframe = DataFrame(
-        eigen_values.reshape(1, 6),
+        eigen_values.reshape(1, len(codes)),
         columns=[f'PC {i+1}' for i in range(len(eigen_values))]
     )
 
