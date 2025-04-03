@@ -24,7 +24,7 @@ jobs:
       - name: "Install necessary tools"
         run: pip install pipenv
       - name: "Install dependencies"
-        run: pipenv install --dev
+        run: pipenv install --dev --skip-lock
       - name: "Lint the program"
         run: pipenv run python lint.py
       - name: "Run tests"
