@@ -1,30 +1,48 @@
 [
   {
     "id": "EMA",
-    "code": "cei_pc020"
+    "code": "cei_pc020",
+    "social": 0,
+    "environmental": 1,
+    "economic": 3
   },
   {
     "id": "PDR",
     "code": "cei_pc030",
-    "Unit of measure": "Euro per kilogram, chain linked volumes (2015)"
+    "Unit of measure": "Euro per kilogram, chain linked volumes (2015)",
+    "social": 0,
+    "environmental": 3,
+    "economic": 1
   },
   {
     "id": "GMR",
-    "code": "cei_pc034"
+    "code": "cei_pc034",
+    "social": 2,
+    "environmental": 2,
+    "economic": 1
   },
   {
     "id": "TRP",
     "code": "sdg_01_10",
     "Age class": "Total",
-    "Unit of measure": "Thousand persons"
+    "Unit of measure": "Thousand persons",
+    "social": 3,
+    "environmental": 0,
+    "economic": 1
   },
   {
     "id": "NDE",
-    "code": "sdg_06_40"
+    "code": "sdg_06_40",
+    "social": 3,
+    "environmental": 1,
+    "economic": 0
   },
   {
     "id": "PMS",
     "code": "sdg_03_42",
-    "Type of mortality": "Preventable mortality"
+    "Type of mortality": "Preventable mortality",
+    "social": 3,
+    "environmental": 0,
+    "economic": 0
   }
 ]

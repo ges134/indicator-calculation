@@ -17,6 +17,13 @@ from independance import (
   get_degrees_of_independance,
   prepare_dataframe_for_pca
 )
+from subjective import (
+    get_scores_for_indicators,
+    get_comparison_matrices,
+    get_subjective_weights,
+    convert_scores_to_dataframe,
+    convert_weights_to_dataframe
+)
 
 def main():
     """
@@ -62,6 +69,28 @@ def main():
     angle_matrix_dataframe = DataFrame(angle_matrix, columns=codes)
     independance_matrix_dataframe = DataFrame(independance_matrix, columns=codes)
 
+    print('Computing AHP')
+    scores = get_scores_for_indicators(config)
+    scores_dataframe = convert_scores_to_dataframe(scores)
+    indicators = scores.keys()
+
+    comparison_matrices = get_comparison_matrices(scores)
+    social_comparison_matrix_dataframe = DataFrame(
+        comparison_matrices['social'],
+        columns=indicators
+    )
+    economic_comparison_matrix_dataframe = DataFrame(
+        comparison_matrices['economic'],
+        columns=indicators
+    )
+    environmental_comparison_matrix_dataframe = DataFrame(
+        comparison_matrices['environmental'],
+        columns=indicators
+    )
+
+    # The eigen values will be used for the uncertainty.
+    weight_vectors, _, final_weights = get_subjective_weights(comparison_matrices)
+    weights_dataframe = convert_weights_to_dataframe(indicators, weight_vectors, final_weights)
 
     print('Saving files')
     save_csv(merged_dataframe, 'merged.csv')
@@ -70,6 +99,11 @@ def main():
     save_csv(explained_variance_dataframe, 'explained-variance.csv')
     save_csv(angle_matrix_dataframe, 'angles.csv')
     save_csv(independance_matrix_dataframe, 'independance_degree.csv')
+    save_csv(scores_dataframe, 'scores.csv')
+    save_csv(social_comparison_matrix_dataframe, 'social-comparison-matrix.csv')
+    save_csv(economic_comparison_matrix_dataframe, 'economic-comparison-matrix.csv')
+    save_csv(environmental_comparison_matrix_dataframe, 'environmental-comparison-matrix.csv')
+    save_csv(weights_dataframe, 'weights.csv')
 
 
 if __name__ == '__main__':
