@@ -47,7 +47,7 @@ def merge_datasets(config: List[Dict]) -> Dict:
         id = indicator['id']
         dataframe = load_dataset(code)
         if dataset_can_be_merged(dataframe):
-            dimensions = [d for d in indicator.keys() if d not in ('id', 'code')]
+            dimensions = [d for d in indicator.keys() if d not in ('id', 'code', 'social', 'environmental', 'economic')]
 
             for dimension in tqdm(dimensions, f'Preparing indicator {id} for merge', leave=False):
                 dataframe = dataframe[dataframe[dimension] == indicator[dimension]]
