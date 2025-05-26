@@ -71,7 +71,7 @@ The program then reuses the configuration file to simulate an AHP process and th
 
 1. Convert the scores into a five points Likert Scale.
 1. Use the Likert scale to compute comparison matrices.
-1. Apply AHP for each pillars and for the pillar themselves.
+1. Apply AHP for each pillars and for the pillar themselves with consistency analysis.
 
 The Likert scale can also be interpreted with the following rules:
 
@@ -86,6 +86,7 @@ The Likert scale can also be interpreted with the following rules:
 The program saves multiple results data. They are detailed below:
 
 - `angles.csv`: The angles computed between each indicators.
+- `consistency.csv`: The consistency analysis for this program execution, per pillar and with the pillars.
 - `economic-comparison-matrix.csv`: The comparison matrix for the economic sustainability pillar.
 - `eigen-values.csv`: The eigen values of each computed principal component.
 - `eigen-vectors.csv`: The eigen vectors of each computed principal component.
