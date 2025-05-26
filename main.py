@@ -22,7 +22,8 @@ from subjective import (
     get_comparison_matrices,
     get_subjective_weights,
     convert_scores_to_dataframe,
-    convert_weights_to_dataframe
+    convert_weights_to_dataframe,
+    convert_consistency_to_dataframe
 )
 
 def main():
@@ -89,8 +90,9 @@ def main():
     )
 
     # The eigen values will be used for the uncertainty.
-    weight_vectors, _, final_weights = get_subjective_weights(comparison_matrices)
+    weight_vectors, consistency, final_weights = get_subjective_weights(comparison_matrices)
     weights_dataframe = convert_weights_to_dataframe(indicators, weight_vectors, final_weights)
+    consistency_dataframe = convert_consistency_to_dataframe(consistency)
 
     print('Saving files')
     save_csv(merged_dataframe, 'merged.csv')
@@ -104,6 +106,7 @@ def main():
     save_csv(economic_comparison_matrix_dataframe, 'economic-comparison-matrix.csv')
     save_csv(environmental_comparison_matrix_dataframe, 'environmental-comparison-matrix.csv')
     save_csv(weights_dataframe, 'weights.csv')
+    save_csv(consistency_dataframe, 'consistency.csv')
 
 
 if __name__ == '__main__':
