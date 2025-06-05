@@ -174,3 +174,5 @@ cython_debug/
 lint.txt
 data/*.csv
 data/config.json
+data/**/*.png
+!data/tests/contribution_baseline.png

@@ -28,9 +28,11 @@ def lint_component():
         'data.py',
         'independance.py',
         'subjective.py',
+        'contribution.py',
         'tests/test_merger.py',
         'tests/test_independance.py',
-        'tests/test_subjective.py'
+        'tests/test_subjective.py',
+        'tests/test_contribution.py'
     ]
     scores = []
 

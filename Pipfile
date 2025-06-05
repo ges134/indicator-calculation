@@ -8,12 +8,11 @@ tqdm = "*"
 pyjstat = "*"
 pandas = "*"
 numpy = "*"
+matplotlib = "*"
 
 [dev-packages]
 pylint = "*"
 coverage = "*"
-notebook = "*"
-matplotlib = "*"
 
 [requires]
 python_version = "3.12"
