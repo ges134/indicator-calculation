@@ -25,6 +25,7 @@ from subjective import (
     convert_weights_to_dataframe,
     convert_consistency_to_dataframe
 )
+from contribution import make_loading_plot
 
 def main():
     """
@@ -63,6 +64,8 @@ def main():
         [explained_variance],
         columns=[f'PC {i+1}' for i in range(len(explained_variance))]
     )
+
+    make_loading_plot(eigen_vectors[:, :2], codes, './data/contribution.png')
 
     print('Computing degrees of independance')
     angle_matrix, independance_matrix = get_degrees_of_independance(eigen_vectors)
