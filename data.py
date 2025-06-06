@@ -55,7 +55,7 @@ def load_config() -> List[Dict]:
     """
     return loads(load_file('config.json'))
 
-def save_csv(dataframe: DataFrame, filepath: str):
+def save_csv(dataframe: DataFrame, filepath: str, index=False):
     """
     Saves a dataframe into the `data/` folder.
 
@@ -64,5 +64,7 @@ def save_csv(dataframe: DataFrame, filepath: str):
         filepath: The path of the file, relative to the data repository.
         If a file is in a subdirectory, the subdirectory should also be included.
         The `.csv` extension should be included in the file path.
+        ìndex: Whether or not to preserve the row number in the saved CSV. The default value is
+        `False`.
     """
-    dataframe.to_csv(f'./data/{filepath}', index=False)
+    dataframe.to_csv(f'./data/{filepath}', index=index)

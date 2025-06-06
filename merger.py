@@ -126,3 +126,20 @@ def convert_dataset_to_dataframe(merged: Dict, config: List[Dict]) -> DataFrame:
     dataframe.sort_values(['Country', 'Year'])
 
     return dataframe
+
+def monitor_dataset(reference: DataFrame, merged: DataFrame) -> DataFrame:
+    """
+    Creates a dataframe that tracks changes between two executions of programs.
+
+    The dataframe is managed by Pandas. Essentially, this shows a minimal dataframe with the changes
+    in the columns and with the index number.
+
+    Args:
+        - reference: The reference data frame, corresponding to when the first data extraction was
+        executed.
+        - merged: The data frame of this current program execution.
+    
+    Returns: The compared data frame from Pandas.
+    """
+    monitered = reference.compare(merged, result_names=('reference', 'new'))
+    return monitered

@@ -29,6 +29,7 @@ def lint_component():
         'independance.py',
         'subjective.py',
         'contribution.py',
+        'monitor.py',
         'tests/test_merger.py',
         'tests/test_independance.py',
         'tests/test_subjective.py',
