@@ -8,7 +8,12 @@ from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
 from math import isnan
 
-from merger import merge_datasets, dataset_can_be_merged, convert_dataset_to_dataframe
+from merger import (
+    merge_datasets,
+    dataset_can_be_merged,
+    convert_dataset_to_dataframe,
+    monitor_dataset
+)
 from data import load_file
 
 UNIT_OF_MEASURE_LABEL = 'Euro per kilogram, chain linked volumes (2015)'
@@ -309,3 +314,38 @@ class MergerTests(TestCase):
 
         self.assertEqual(len(results), len(verified_row_keys))
         self.assertEqual(results.shape[1], 7)
+
+    @patch('merger.load_dataset')
+    def test_monitor_dataset(self, load_dataset_mock: Mock):
+        """
+        Tests the metho `monitor_dataset` under the nominal scenario.
+        """
+
+        # Arrange
+        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_03_42']
+        dataframes = []
+        for code in codes:
+            stub = Dataset.read(load_file(f'tests/{code}.json'))
+            dataframes.append(stub.write('dataframe'))
+
+        load_dataset_mock.side_effect = dataframes
+        results = merge_datasets(CONFIG)
+        reference = convert_dataset_to_dataframe(results, CONFIG)
+        new_dataset = reference.copy()
+        new_dataset.loc[0, 'PMS'] = 10.0
+        new_dataset.loc[72, 'PDR'] = 20.0
+
+        # Act
+        results = monitor_dataset(reference, new_dataset)
+
+        # Assert
+        self.assertEqual(2, len(results.index))
+        self.assertEqual(4, len(results.columns))
+        self.assertTrue(isnan(results.loc[0, 'PDR'].reference))
+        self.assertTrue(isnan(results.loc[0, 'PDR'].new))
+        self.assertTrue(isnan(results.loc[0, 'PMS'].reference))
+        self.assertEqual(10.0, results.loc[0, 'PMS'].new)
+        self.assertEqual(2.1291, results.loc[72, 'PDR'].reference)
+        self.assertEqual(20.0, results.loc[72, 'PDR'].new)
+        self.assertTrue(isnan(results.loc[72, 'PMS'].reference))
+        self.assertTrue(isnan(results.loc[72, 'PMS'].new))

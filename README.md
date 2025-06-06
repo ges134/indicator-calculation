@@ -100,3 +100,19 @@ The program saves multiple results data and one figure. They are detailed below:
 - `weights.csv`: The weights of each indicator according to each pillar and the final weights of said indicators.
 
 The angles and independances degree are in triangular format. Anything under the diagonal is unused.
+
+## Monitoring data changes
+
+A subprogram monitors changes in the indicators data in the Eurostat database. To monitor said changes, the configuration file and a reference merged dataset must be provided. The reference merged dataset is the `merged.csv` file associated to the configuration of the program. The file must be named `reference.csv` in order for the subprogram to work. The following command can run the program:
+
+```sh
+pipenv run py monitor.py
+```
+
+The program will do the following.
+
+1. Load the reference dataset and load the dataset with Eurostat data.
+1. Create a Pandas `DataFrame` that compares old and new values.
+1. Save said dataset.
+
+The saved file is named `monitored.csv` and follows the [Pandas `compare` format](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.compare.html). In summary, if the file is empty, no changes were reported. If there is a change, the dataset will only reflect those changes. Hence, not all indicators and not all rows may be present in the monitored file. The changed indicators will appear with the indicator identifier and two column, `reference` and `new`. The former referes to the reference dataset, provided with the execution program, while the latter is the one that is associated with the current program execution. The row number appears as the first column, which can be used to track changes. `NaN` may appear to indicate that no changes were observer for this indicator in this row.
