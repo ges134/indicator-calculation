@@ -102,7 +102,7 @@ class TestSubjective(TestCase):
                 'economic': 1,
             },
             'PMS': {
-                'social': 7,
+                'social': 5,
                 'environmental': 1,
                 'economic': 1,
             }
@@ -121,12 +121,12 @@ class TestSubjective(TestCase):
 
         # Arrange
         expected_social_matrix = [
-            [1, 1, 1/3, 1/7, 1/7, 1/7],
-            [1, 1, 1/3, 1/7, 1/7, 1/7],
-            [3, 3, 1, 1/5, 1/5, 1/5],
-            [7, 7, 5, 1, 1, 1],
-            [7, 7, 5, 1, 1, 1],
-            [7, 7, 5, 1, 1, 1]
+            [1, 1, 1/3, 1/7, 1/7, 1/5],
+            [1, 1, 1/3, 1/7, 1/7, 1/5],
+            [3, 3, 1, 1/5, 1/5, 1/3],
+            [7, 7, 5, 1, 1, 3],
+            [7, 7, 5, 1, 1, 3],
+            [5, 5, 3, 1/3, 1/3, 1]
         ]
         expected_environmental_matrix = [
             [1, 1/7, 1/3, 1, 1, 1],
@@ -165,17 +165,17 @@ class TestSubjective(TestCase):
         """
 
         # Arrange
-        expected_social_weights = [0.0359, 0.0359, 0.0757, 0.2842, 0.2842, 0.2842]
+        expected_social_weights = [0.0376, 0.0376, 0.0805 , 0.3404, 0.3404, 0.1634]
         expected_environmental_weights = [0.0672, 0.5501, 0.1810, 0.0672, 0.0672, 0.0672]
         expected_economic_weights = [0.5833, 0.0833, 0.0833, 0.0833, 0.0833, 0.0833]
         expected_pillars_weights = [0.0556, 0.4814, 0.4629]
         expected_eigen_values = {
-            'social': 6.098,
+            'social': 6.169,
             'economic': 6.0,
             'environmental': 6.0662,
             'pillar': 3.002
         }
-        expected_final_weights = [0.3044, 0.3054, 0.1299, 0.0868, 0.0868, 0.0868]
+        expected_final_weights = [0.3045, 0.3055, 0.1302, 0.0899, 0.0899, 0.0800]
 
         scores = get_scores_for_indicators(CONFIG)
         matrices = get_comparison_matrices(scores)

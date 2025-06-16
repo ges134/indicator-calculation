@@ -129,12 +129,12 @@ def get_scores_for_indicators(config: Dict) -> Dict:
     This method uses these score to create a Liket scale to use for AHP. Each pillar is associated
     with a score, 3 for the pillar and 1 for the other pillars. Then, a five point score is computed
     with the following rules:
-    - 1: The indicator has a difference of at least two points with the pillar.
-    - 3: The indicator has a difference of one point with the pillar.
-    - 5: The indicator has the same score as the pillar. A difference of 3 or 4 point is observed
-        for the other pillars.
-    - 7: The indicator has the same score as the pillar. A difference of 1 or 2 point is observed
-        for the other pillars.
+    - 1: The indicator has a score of 0 or 1 for the pillar
+    - 3: The indicator has a score of 2 for the pillar
+    - 5: The indicator has a score of 3 for the pillar. A difference of 2 points is observed for the
+        other pillars.
+    - 7: The indicator has a score of 3 for the pillar. A difference of 1 point is observed for the
+        other pillars.
     - 9: The indicator is a perfect match with the pillar.
 
     Args:
@@ -169,22 +169,22 @@ def get_scores_for_indicators(config: Dict) -> Dict:
                 if pillar == 'social':
                     if indicator['social'] == social_score:
                         indicator_score_for_pillar = 7 \
-                            if difference_economic + difference_environmental < 3 \
+                            if difference_economic + difference_environmental == 1 \
                             else 5
-                    elif difference_social < 2:
+                    elif indicator['social'] == 2:
                         indicator_score_for_pillar = 3
                 elif pillar == 'environmental':
                     if indicator['environmental'] == environmental_score:
                         indicator_score_for_pillar = 7 \
-                            if difference_economic + difference_social < 3 \
+                            if difference_economic + difference_social == 1 \
                             else 5
-                    elif difference_environmental < 2:
+                    elif indicator['environmental'] == 2:
                         indicator_score_for_pillar = 3
                 elif indicator['economic'] == economic_score:
                     indicator_score_for_pillar = 7 \
-                        if difference_environmental + difference_social < 3 \
+                        if difference_environmental + difference_social == 1 \
                         else 5
-                elif difference_economic < 2:
+                elif indicator['economic'] == 2:
                     indicator_score_for_pillar = 3
 
             if indicator['id'] not in scores:

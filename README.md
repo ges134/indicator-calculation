@@ -75,10 +75,10 @@ The program then reuses the configuration file to simulate an AHP process and th
 
 The Likert scale can also be interpreted with the following rules:
 
-- 1: The indicator has a difference of at least two points with the pillar.
-- 3: The indicator has a difference of one point with the pillar.
-- 5: The indicator has the same score as the pillar. A difference of 3 or 4 point is observed for the other pillars.
-- 7: The indicator has the same score as the pillar. A difference of 1 or 2 point is observed for the other pillars.
+- 1: The indicator has a score of 0 or 1 for the pillar
+- 3: The indicator has a score of 2 for the pillar
+- 5: The indicator has a score of 3 for the pillar. A difference of 2 points is observed for the other pillars.
+- 7: The indicator has a score of 3 for the pillar. A difference of 1 point is observed for the other pillars.
 - 9: The indicator is a perfect match with the pillar.
 
 ## Saved data
