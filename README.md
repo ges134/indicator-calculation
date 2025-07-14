@@ -25,9 +25,9 @@ Where:
 
 - `id` (**Mandatory**): The identifier of the indicator to be collected. This identifier is internal and will be found again in the merged file.
 - `code` (**Mandatory**): The Eurostat identifier of this indicator.
-- `social`: The score, between 0 and 3, for the social pillar for this indicator.
-- `environmental`: The score, between 0 and 3, for the environmental pillar for this indicator.
-- `economic`: The score, between 0 and 3, for the economic pillar for this indicator.
+- `social` (**Mandatory**): The score, between 0 and 3, for the social pillar for this indicator.
+- `environmental` (**Mandatory**): The score, between 0 and 3, for the environmental pillar for this indicator.
+- `economic` (**Mandatory**): The score, between 0 and 3, for the economic pillar for this indicator.
 - `key-values-dimensions`: Each indicator should specify the different dimensions of data when there is more than one available option. It can be omitted when there is only one dimension. For instance, if the indicator reports multiple units of measures, the configuration file should have a key value `"Unit of measure": "Unit"`. On the Eurostat website, the _Customize your dataset_ shows the different dimensions. The dimensions _Time_, _Time Frequency_ and _Geopolitical entity (reporting)_ should be omitted too as they are checked by default in the program. If these columns are not available, the dataset will not be merged.
 
 The scores are on a scale of one to three with a particular significance. The scores can be interpreted as such:
@@ -62,10 +62,14 @@ The program flow will parse each indicator in the `codes` file. Each indicator g
 
 The created dataset is then converted into a PCA-ready dataset. The program then does the following with the dataset:
 
-1. Compute the PCA for the indicators
+1. Compute the PCA for the indicators.
 1. Compute the degrees of independance of the indicators.
 
 A degree of independance is a value between 0 and 1 that shows how a pair of indicators is independant from one another. This is made from the application that PC are uncorollated. Hence, the closer an indicator is to the value of 0, the more independant they are.
+
+Afterward, the program compute confidence intervals based on the bootstrap methods. While this is a work in progress, it implies the following steps:
+
+1. Draw bootstrap samples of the merged indicators.
 
 The program then reuses the configuration file to simulate an AHP process and then gain subjective weights. The program does the following with the configuration file:
 
@@ -86,6 +90,7 @@ The Likert scale can also be interpreted with the following rules:
 The program saves multiple results data and one figure. They are detailed below:
 
 - `angles.csv`: The angles computed between each indicators.
+- `bootstraped-dataset.csv`: The dataset of the bootstrap samples.
 - `consistency.csv`: The consistency analysis for this program execution, per pillar and with the pillars.
 - `contribution.png`: The contribution graph of the PCA.
 - `economic-comparison-matrix.csv`: The comparison matrix for the economic sustainability pillar.

@@ -2,10 +2,10 @@
 The main module contains the main program of the indicator calculation.
 
 A typical program execution will query Eurostat databases, merge the collected datasets into one
-dictionnary and compute elements necessary for the integrated subjective-objective approach. Note
-that only the degree of independance for aggregation and the subjective approach is computed by the
-program. The remainder should be set up in a spreadsheet software. All generated data by the program
-is saved into a file.
+dictionnary, compute elements necessary for the integrated subjective-objective approach and compute
+the confidence intervals from the principal component analysis. Note that only the degree of
+independance for aggregation and the subjective approach is computed by the program. The remainder
+should be set up in a spreadsheet software. All generated data by the program is saved into a file.
 """
 
 from pandas import DataFrame
@@ -26,6 +26,7 @@ from subjective import (
     convert_consistency_to_dataframe
 )
 from contribution import make_loading_plot
+from confidence import bootstrap_indicators, bootstraped_indicators_to_dataframe
 
 def main():
     """
@@ -73,6 +74,14 @@ def main():
     angle_matrix_dataframe = DataFrame(angle_matrix, columns=codes)
     independance_matrix_dataframe = DataFrame(independance_matrix, columns=codes)
 
+    print('Computing confidence intervals for the PCA')
+    # This is still a work in progress.
+    bootstraped_indicators = bootstrap_indicators(indicators_data)
+    bootstraped_indicator_dataframe = bootstraped_indicators_to_dataframe(
+        bootstraped_indicators,
+        codes
+    )
+
     print('Computing AHP')
     scores = get_scores_for_indicators(config)
     scores_dataframe = convert_scores_to_dataframe(scores)
@@ -110,6 +119,7 @@ def main():
     save_csv(environmental_comparison_matrix_dataframe, 'environmental-comparison-matrix.csv')
     save_csv(weights_dataframe, 'weights.csv')
     save_csv(consistency_dataframe, 'consistency.csv')
+    save_csv(bootstraped_indicator_dataframe, 'bootstraped-data.csv')
 
 
 if __name__ == '__main__':

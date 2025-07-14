@@ -30,10 +30,14 @@ def lint_component():
         'subjective.py',
         'contribution.py',
         'monitor.py',
+        'stats.py',
+        'confidence.py',
         'tests/test_merger.py',
         'tests/test_independance.py',
         'tests/test_subjective.py',
-        'tests/test_contribution.py'
+        'tests/test_contribution.py',
+        'tests/test_stats.py',
+        'tests/test_confidence.py',
     ]
     scores = []
 
