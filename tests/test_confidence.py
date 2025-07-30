@@ -4,7 +4,13 @@ This module provides automated tests for the `Confidence` module.
 
 from unittest import TestCase
 from numpy import array
-from confidence import bootstrap_indicators, NUMBER_OF_SAMPLES, bootstraped_indicators_to_dataframe
+from confidence import (
+    bootstrap_indicators,
+    NUMBER_OF_SAMPLES,
+    bootstraped_indicators_to_dataframe,
+    jacknifed_indicators_to_dataframe
+)
+from stats import jacknife
 
 DATA = array([
     [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
@@ -58,10 +64,34 @@ class TestConfidence(TestCase):
             i = row.Index
             bootstrap_number = i // 18
             bootstrap_row = i % 18
-            self.assertEqual(bootstrap_number + 1, row._1)
+            self.assertEqual(bootstrap_number + 1, row._1) # pylint: disable=protected-access
             self.assertEqual(samples[bootstrap_number][bootstrap_row][0], row.cei_pc020)
             self.assertEqual(samples[bootstrap_number][bootstrap_row][1], row.cei_pc030)
             self.assertEqual(samples[bootstrap_number][bootstrap_row][2], row.cei_pc034)
             self.assertEqual(samples[bootstrap_number][bootstrap_row][3], row.sdg_01_10)
             self.assertEqual(samples[bootstrap_number][bootstrap_row][4], row.sdg_06_40)
             self.assertEqual(samples[bootstrap_number][bootstrap_row][5], row.sdg_03_42)
+
+    def test_jacknifed_indicators_to_dataframe(self):
+        """
+        Tests the method `jacknifed_indicators_to_dataframe` under the normal scenario.
+        """
+        # Arrange
+        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_06_40', 'sdg_03_42']
+        jacknifed = jacknife(DATA)
+
+        # Act
+        samples_dataframe = jacknifed_indicators_to_dataframe(jacknifed, codes)
+
+        # Assert
+        for row in samples_dataframe.itertuples():
+            i = row.Index
+            jacknife_number = i // 17
+            jacknife_row = i % 17
+            self.assertEqual(jacknife_number + 1, row._1) # pylint: disable=protected-access
+            self.assertEqual(jacknifed[jacknife_number][jacknife_row][0], row.cei_pc020)
+            self.assertEqual(jacknifed[jacknife_number][jacknife_row][1], row.cei_pc030)
+            self.assertEqual(jacknifed[jacknife_number][jacknife_row][2], row.cei_pc034)
+            self.assertEqual(jacknifed[jacknife_number][jacknife_row][3], row.sdg_01_10)
+            self.assertEqual(jacknifed[jacknife_number][jacknife_row][4], row.sdg_06_40)
+            self.assertEqual(jacknifed[jacknife_number][jacknife_row][5], row.sdg_03_42)

@@ -4,8 +4,10 @@ mainly used to realize principal component analysis. This method performs this a
 data manipulation to compute confidence intervals.
 """
 
+from numpy import delete, array
 from numpy.typing import NDArray
 from numpy.random import default_rng
+from typing import List
 
 def generate_bootstraped_dataset(data: NDArray) -> NDArray:
     """
@@ -25,4 +27,18 @@ def generate_bootstraped_dataset(data: NDArray) -> NDArray:
         row_index = rng.integers(0, len(data))
         bootstraped.append(data[row_index])
 
-    return bootstraped
+    return array(bootstraped)
+
+def jacknife(data: NDArray) -> List[NDArray]:
+    """
+    Applies the jacknife algorithm to the dataset.
+
+    This algorithm consist in creating samples in which one observation is removed.
+
+    Args:
+        - data: The data to jacknife.
+
+    Returns: A list of jacknifed sample, the `i`-th entry of the returned array is a jacknife sample
+        to which the `i`-th row was removed from the empirical dataset.
+    """
+    return [delete(data, i, 0) for i in range(len(data))]

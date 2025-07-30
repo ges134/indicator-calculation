@@ -26,7 +26,12 @@ from subjective import (
     convert_consistency_to_dataframe
 )
 from contribution import make_loading_plot
-from confidence import bootstrap_indicators, bootstraped_indicators_to_dataframe
+from confidence import (
+    bootstrap_indicators,
+    bootstraped_indicators_to_dataframe,
+    jacknifed_indicators_to_dataframe
+)
+from stats import jacknife
 
 def main():
     """
@@ -81,6 +86,11 @@ def main():
         bootstraped_indicators,
         codes
     )
+    jacknifed_indicators = jacknife(indicators_data)
+    jacknifed_indicators_dataframe = jacknifed_indicators_to_dataframe(
+        jacknifed_indicators,
+        codes
+    )
 
     print('Computing AHP')
     scores = get_scores_for_indicators(config)
@@ -120,6 +130,7 @@ def main():
     save_csv(weights_dataframe, 'weights.csv')
     save_csv(consistency_dataframe, 'consistency.csv')
     save_csv(bootstraped_indicator_dataframe, 'bootstraped-data.csv')
+    save_csv(jacknifed_indicators_dataframe, 'jacknifed-data.csv')
 
 
 if __name__ == '__main__':
