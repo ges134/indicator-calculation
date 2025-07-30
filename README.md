@@ -70,6 +70,7 @@ A degree of independance is a value between 0 and 1 that shows how a pair of ind
 Afterward, the program compute confidence intervals based on the bootstrap methods. While this is a work in progress, it implies the following steps:
 
 1. Draw bootstrap samples of the merged indicators.
+1. Create the jacknifed dataset of the merged indicators.
 
 The program then reuses the configuration file to simulate an AHP process and then gain subjective weights. The program does the following with the configuration file:
 
@@ -99,6 +100,7 @@ The program saves multiple results data and one figure. They are detailed below:
 - `environmental-comparison-matrix.csv`: The comparison matrix for the environmental sustainability pillar.
 - `explained-variance.csv`: The explained variance of each computed principal componenent.
 - `independance_degree.csv`: The degree of independance between each indicators.
+- `jacknifed-dataset.csv`: The dataset of the jacknifed data.
 - `merged.csv`: The merged dataset.
 - `scores.csv`: The scores of each indicator in the Likert scale.
 - `social-comparison-matrix.csv`: The comparison matrix for the social sustanibility pillar.

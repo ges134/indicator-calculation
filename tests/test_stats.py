@@ -5,7 +5,7 @@ This module provides automated tests for the `Stats` module.
 from unittest import TestCase
 from numpy import array
 
-from stats import generate_bootstraped_dataset
+from stats import generate_bootstraped_dataset, jacknife
 
 DATA = array([
     [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
@@ -43,5 +43,19 @@ class TestStats(TestCase):
 
         # Assert
         self.assertEqual(len(DATA), len(generated))
-        for row in generated:
-            self.assertTrue(row in DATA)
+        for row in generated.tolist():
+            self.assertTrue(row in DATA.tolist())
+
+    def test_jacknife(self):
+        """
+        Tests the method `jacknife` under the normal scenario
+        """
+
+        # Act
+        jacknifed = jacknife(DATA)
+
+        # Assert
+        self.assertEqual(len(DATA), len(jacknifed))
+        self.assertTrue(all(len(s) == len(DATA) - 1 for s in jacknifed))
+        for i, sample in enumerate(jacknifed):
+            self.assertFalse(DATA[i].tolist() in sample.tolist())
