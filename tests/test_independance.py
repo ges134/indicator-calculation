@@ -8,12 +8,9 @@ from numpy import array
 from pyjstat.pyjstat import Dataset
 
 from merger import merge_datasets, convert_dataset_to_dataframe
-from independance import (
-  apply_pca_on_indicators,
-  get_degrees_of_independance,
-  prepare_dataframe_for_pca
-)
+from independance import get_degrees_of_independance, prepare_dataframe_for_pca
 from data import load_file
+from stats import apply_pca
 
 DATA = array([
     [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
@@ -110,44 +107,12 @@ class TestIndependance(TestCase):
             for j, value in enumerate(row):
                 self.assertAlmostEqual(value, expected_results[i][j], 6)
 
-
-    def test_apply_pca_on_indicators(self):
-        """
-        Tests the method `apply_pca_on_indicators` under the nominal scenario.
-        """
-        # Arrange
-        expected_eigenvalues = [2.3724, 1.4218, 1.1748,	0.5915, 0.3011, 0.1383]
-        expected_eigenvectors = [
-            [0.541, -0.350, 0.193, 0.136, 0.145, 0.713],
-            [-0.436, -0.236, -0.344, 0.696, 0.377, 0.099],
-            [0.571, -0.006, 0.214, 0.405, 0.268, -0.626],
-            [0.091, 0.744, 0.053, 0.491, -0.356, 0.260],
-            [-0.321, 0.302, 0.662, -0.105, 0.587, 0.113],
-            [0.283, 0.421, -0.599, -0.283, 0.543, 0.098]
-        ]
-        expected_variance = [0.395, 0.237, 0.196, 0.099, 0.050, 0.023]
-
-        # Act
-        eigen_values, eigen_vectors, explained_variance = apply_pca_on_indicators(DATA)
-
-        # Assert
-        for i, value in enumerate(eigen_values):
-            self.assertAlmostEqual(value, expected_eigenvalues[i], 4)
-
-        for i, row in enumerate(eigen_vectors):
-            for j, value in enumerate(row):
-                self.assertAlmostEqual(value, expected_eigenvectors[i][j], 3)
-
-        for i, value in enumerate(explained_variance):
-            self.assertAlmostEqual(value, expected_variance[i], 3)
-
-
     def test_get_degrees_of_independance(self):
         """
         Tests the method `get_degrees_of_independance` under the nominal scenario.
         """
         # Arrange
-        _, eigen_vectors, _ = apply_pca_on_indicators(DATA)
+        _, eigen_vectors, _ = apply_pca(DATA)
 
         expected_angles = [
             [0, 118.7, 32.2, 115.9, 169.6, 89],

@@ -9,14 +9,11 @@ should be set up in a spreadsheet software. All generated data by the program is
 """
 
 from pandas import DataFrame
+from numpy import mean
 
 from merger import merge_datasets, convert_dataset_to_dataframe
 from data import load_config, save_csv
-from independance import (
-  apply_pca_on_indicators,
-  get_degrees_of_independance,
-  prepare_dataframe_for_pca
-)
+from independance import get_degrees_of_independance, prepare_dataframe_for_pca
 from subjective import (
     get_scores_for_indicators,
     get_comparison_matrices,
@@ -27,11 +24,11 @@ from subjective import (
 )
 from contribution import make_loading_plot
 from confidence import (
-    bootstrap_indicators,
     bootstraped_indicators_to_dataframe,
-    jacknifed_indicators_to_dataframe
+    jacknifed_indicators_to_dataframe,
+    generate_bootstraped_pcas_on_indicators
 )
-from stats import jacknife
+from stats import jacknife, apply_pca
 
 def main():
     """
@@ -54,7 +51,7 @@ def main():
     indicators_data = prepare_dataframe_for_pca(merged_dataframe)
 
     print('Computing PCA on indicators')
-    eigen_values, eigen_vectors, explained_variance = apply_pca_on_indicators(indicators_data)
+    eigen_values, eigen_vectors, explained_variance = apply_pca(indicators_data)
 
     eigen_values_dataframe = DataFrame(
         eigen_values.reshape(1, len(codes)),
@@ -81,16 +78,22 @@ def main():
 
     print('Computing confidence intervals for the PCA')
     # This is still a work in progress.
-    bootstraped_indicators = bootstrap_indicators(indicators_data)
-    bootstraped_indicator_dataframe = bootstraped_indicators_to_dataframe(
-        bootstraped_indicators,
-        codes
-    )
     jacknifed_indicators = jacknife(indicators_data)
     jacknifed_indicators_dataframe = jacknifed_indicators_to_dataframe(
         jacknifed_indicators,
         codes
     )
+    bootstraped_indicators, bootstraped_pcas = generate_bootstraped_pcas_on_indicators(
+        indicators_data,
+        eigen_vectors
+    )
+    bootstraped_indicator_dataframe = bootstraped_indicators_to_dataframe(
+        bootstraped_indicators,
+        codes
+    )
+    # This will be removed afterwards
+    print('Test mean of pcas')
+    print(mean(bootstraped_pcas, axis=0))
 
     print('Computing AHP')
     scores = get_scores_for_indicators(config)

@@ -6,8 +6,8 @@ from unittest import TestCase
 from numpy import array
 from matplotlib.testing.compare import compare_images
 
-from independance import apply_pca_on_indicators
 from contribution import make_loading_plot
+from stats import apply_pca
 
 DATA = array([
     [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
@@ -41,7 +41,7 @@ class TestContribution(TestCase):
         """
 
         # Arrange
-        _, eigen_vectors, _ = apply_pca_on_indicators(DATA)
+        _, eigen_vectors, _ = apply_pca(DATA)
         codes = ['EMA', 'PDR', 'GMR', 'TRP', 'NDE', 'PMS']
 
         # Act
