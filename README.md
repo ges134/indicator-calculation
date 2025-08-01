@@ -69,7 +69,7 @@ A degree of independance is a value between 0 and 1 that shows how a pair of ind
 
 Afterward, the program compute confidence intervals based on the bootstrap methods. While this is a work in progress, it implies the following steps:
 
-1. Draw bootstrap samples of the merged indicators.
+1. Draw bootstrap samples of the merged indicators and apply the PCA of these bootstraped samples.
 1. Create the jacknifed dataset of the merged indicators.
 
 The program then reuses the configuration file to simulate an AHP process and then gain subjective weights. The program does the following with the configuration file:

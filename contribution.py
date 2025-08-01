@@ -11,7 +11,7 @@ def make_loading_plot(eigen_vectors: NDArray, codes: List[str], file_name: str):
     """
     Generates the loading plot based on a PCA and saves it.
 
-    The PCA should be done beforehand with the method `independance.apply_pca_on_indicators`. 
+    The PCA should be done beforehand with the method `stats.apply_pca`. 
 
     Args:
         - eigen_vectors: The eigen vectors of the resulting PCA. Only the firt two PCs are

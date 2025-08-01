@@ -5,8 +5,8 @@ to the eigen vector of the first two principal components, the more independant 
 allows also the computation of the PCA.
 """
 
-from numpy import array, corrcoef, abs, argmax, sign, newaxis, rad2deg, acos, dot, mean, std
-from numpy.linalg import eig, norm
+from numpy import array, rad2deg, acos, dot
+from numpy.linalg import norm
 from numpy.typing import NDArray
 from typing import Tuple
 from tqdm import tqdm
@@ -30,59 +30,9 @@ def prepare_dataframe_for_pca(indicators: DataFrame) -> NDArray:
     filtered_dataframe = filtered_dataframe.groupby(['Country']).mean()
     return filtered_dataframe.iloc[:, 1:].to_numpy()
 
-def apply_pca_on_indicators(
-    indicators: NDArray
-) -> Tuple[NDArray, NDArray, NDArray]:
-    """
-    Does the PCA on the indicators data given as a parameter.
-
-    This method does, more precisely, a PCA on a correlation matrix wihtout any transformation.
-
-    Args:
-        - indicators: The data of the indicators. The data should be complete and have no empty
-            data entry.
-
-    Returns: The results of the PCA, in the form of a tuple. The first value of the tuple gives the
-        eigen values. The second gives the eigen vectors and the last gives the explained variance
-        by each principal component.
-    """
-    data = array(indicators)
-
-    # From here, most of the code is taken from
-    # https://bagheri365.github.io/blog/Principal-Component-Analysis-from-Scratch/
-    # Variable names are changed.
-
-    average = mean(data, axis=0)
-    standard_deviation = std(data, axis=0)
-    data = (data - average) / standard_deviation
-
-    correlation_matrix = corrcoef(data.T)
-    eigen_values, eigen_vectors = eig(correlation_matrix)
-
-    # Adjusting the eigenvectors (loadings) that are largest in absolute value to be positive
-    max_abs_index = argmax(abs(eigen_vectors), axis=0)
-    signs = sign(eigen_vectors[max_abs_index, range(eigen_vectors.shape[0])])
-    eigen_vectors = eigen_vectors*signs[newaxis,:]
-    eigen_vectors = eigen_vectors.T
-
-    # We first make a list of (eigenvalue, eigenvector) tuples
-    eigen_pairs = [(abs(eigen_values[i]), eigen_vectors[i,:]) for i in range(len(eigen_values))]
-
-    # Then, we sort the tuples from the highest to the lowest based on eigenvalues magnitude
-    eigen_pairs.sort(key=lambda x: x[0], reverse=True)
-
-    # For further usage
-    eigen_values_sorted = array([x[0] for x in eigen_pairs])
-    eigen_vectors_sorted = array([x[1] for x in eigen_pairs])
-
-    eigen_values_total = sum(eigen_values)
-    explained_variance = [(i / eigen_values_total) for i in eigen_values_sorted]
-
-    return eigen_values_sorted, eigen_vectors_sorted.T, explained_variance
-
 def get_degrees_of_independance(eigen_vectors: NDArray) -> Tuple[NDArray, NDArray]:
     """
-    Computes the degrees of independances with the results of the PCA. `apply_pca_on_indicators`
+    Computes the degrees of independances with the results of the PCA. `stats.apply_pca`
     should be run beforehand.
 
     Args:

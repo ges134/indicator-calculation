@@ -3,14 +3,16 @@ This module provides automated tests for the `Confidence` module.
 """
 
 from unittest import TestCase
-from numpy import array
+from unittest.mock import patch, Mock
+from numpy import array, allclose
 from confidence import (
-    bootstrap_indicators,
     NUMBER_OF_SAMPLES,
     bootstraped_indicators_to_dataframe,
-    jacknifed_indicators_to_dataframe
+    jacknifed_indicators_to_dataframe,
+    bootstrap_and_apply_pca,
+    generate_bootstraped_pcas_on_indicators
 )
-from stats import jacknife
+from stats import jacknife, apply_pca
 
 DATA = array([
     [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
@@ -38,15 +40,69 @@ class TestConfidence(TestCase):
     This class provides automated tests for the module's methods.
     """
 
-    def test_bootstrap_indicators(self):
+    @patch('confidence.generate_bootstraped_dataset')
+    def test_bootstrap_and_apply_pca(self, generate_bootstraped_dataset_mock: Mock):
         """
-        Tests the method `bootstrap_indicators` under the normal scenario.
+        Tests the method `bootstrap_and_apply_pca` under the normal scenario.
         """
+
+        # Arrange
+        stub_bootstraped = array([
+            [16.36666667, 106.1196667, 1132, 27.23333333, 3.816666667, 519.9066667],
+            [27.29866667, 106.2463333, 16051, 23.16666667, 4.963333333, 389.16],
+            [13.036, 144.3146667, 4847, 18.63333333, 18.36666667, 195.5966667],
+            [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
+            [27.29866667, 106.2463333, 16051, 23.16666667, 4.963333333, 389.16],
+            [16.36666667, 106.1196667, 1132, 27.23333333, 3.816666667, 519.9066667],
+            [15.58633333, 144.378, 4857.666667, 19.56666667, 26.66666667, 241.21],
+            [19.55066667, 128.865, 17387.33333, 35.83333333, 31.02, 456.8366667],
+            [11.40066667, 110.0233333, 5435.666667, 19.76666667, 57.49666667, 203.06],
+            [16.36666667, 106.1196667, 1132, 27.23333333, 3.816666667, 519.9066667],
+            [11.09133333, 157.6246667, 2833, 26.13333333, 19.37, 181.11],
+            [16.36666667, 106.1196667, 1132, 27.23333333, 3.816666667, 519.9066667],
+            [13.971, 141.1563333, 5813, 21, 28.95666667, 227.61],
+            [15.44266667, 249.443, 3109.666667, 21.23333333, 13.12, 212.54],
+            [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
+            [15.81566667, 136.939, 1528.333333, 22.16666667, 19.69, 225.14],
+            [19.55066667, 128.865, 17387.33333, 35.83333333, 31.02, 456.8366667],
+            [13.693, 156.29, 2190, 15.36666667, 17.76666667, 416.7166667]
+        ])
+        expected_eigen_vectors = array([
+            [0.429833643, -0.542626346, 0.37302348, 0.056694005, 0.024412442, -0.614689346],
+            [-0.409761751, -0.052312821, 0.035590093, 0.848510303, 0.302681929, -0.12847543],
+            [0.358127487, 0.056116642, 0.655436435, 0.211626614, 0.088065397, 0.621656953],
+            [0.414472986, 0.628987545, -0.062158334, 0.362957533, -0.462622349, -0.288037402],
+            [-0.289579131, 0.526819505, 0.515794378, -0.316511977, 0.369000286, -0.36908028],
+            [-0.513263207, -0.162809143, 0.400102998, -0.010593811, -0.741519736, -0.002811768]
+        ])
+
+        generate_bootstraped_dataset_mock.side_effect = [stub_bootstraped]
+        _, empiric_eigen_vectors, _ = apply_pca(DATA)
+
         # Act
-        samples = bootstrap_indicators(DATA)
+        result_sample, result_eigen_vectors = bootstrap_and_apply_pca(DATA, empiric_eigen_vectors)
 
         # Assert
-        self.assertEqual(len(samples), NUMBER_OF_SAMPLES)
+        self.assertTrue(allclose(stub_bootstraped, result_sample))
+        self.assertTrue(allclose(expected_eigen_vectors, result_eigen_vectors))
+
+    def test_generate_bootstraped_pcas_on_indicators(self):
+        """
+        Tests the method `generate_bootstraped_pcas_on_indicators` under the normal scenario.
+        """
+
+        # Arrange
+        _, empiric_eigen_vectors, _ = apply_pca(DATA)
+
+        # Act
+        bootstraped_results, pcas_results = generate_bootstraped_pcas_on_indicators(
+            DATA,
+            empiric_eigen_vectors
+        )
+
+        # Assert
+        self.assertEqual(len(bootstraped_results), NUMBER_OF_SAMPLES)
+        self.assertEqual(len(pcas_results), NUMBER_OF_SAMPLES)
 
     def test_bootstraped_indicators_to_dataframe(self):
         """
@@ -54,7 +110,8 @@ class TestConfidence(TestCase):
         """
         # Arrange
         codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_06_40', 'sdg_03_42']
-        samples = bootstrap_indicators(DATA)
+        _, empiric_eigen_vectors, _ = apply_pca(DATA)
+        samples, _ = generate_bootstraped_pcas_on_indicators(DATA, empiric_eigen_vectors)
 
         # Act
         samples_dataframe = bootstraped_indicators_to_dataframe(samples, codes)
