@@ -14,7 +14,7 @@ from tqdm import tqdm
 from numpy import full, hstack, concatenate, abs, argmax, unique
 from numpy.typing import NDArray
 
-from stats import generate_bootstraped_dataset, apply_pca, correlation_matrix_between_pcas
+from stats import generate_bootstraped_dataset, apply_pca, correlation_matrix_between_pcas, jacknife
 
 NUMBER_OF_SAMPLES = 2000
 
@@ -114,6 +114,33 @@ def bootstrap_and_apply_pca(
             final_bootstraped_eigen_vectors[index, :] = final_bootstraped_eigen_vectors[index, :] * -1
 
     return final_bootstrap_sample, final_bootstraped_eigen_vectors
+
+def jacknife_and_apply_pca(indicators: NDArray) -> Tuple[List[NDArray], List[NDArray]]:
+    """
+    Jacknifes the data and then, for each jacknifed sample, applies the PCA.
+
+    See `stats.jacknife` to understand the jacknifing procedure and `stats.apply_pca` to understand
+    the PCA.
+
+    Args:
+        - indicators: The indicators to jacknife.
+
+    Returns: A tuple with two three dimensionnal array. The first element of the tuple returns the
+        jacknifed samples. In this array, the first index represents the number of the row with a
+        removed element. The second index represents the row (observation) and the third index 
+        returns the value of an indicator. The second element of the tuple returns the associated 
+        PCAs for the jacknifed dataset. In this array, the first index represents the number of the
+        jacknifed sample. The second index represents the indicator and the third index represents
+        the eigen vectors components for each principal component.
+    """
+
+    jacknifed_data = jacknife(indicators)
+    jacknifed_pca = []
+    for sample in jacknifed_data:
+        _, eigen_vectors, _ = apply_pca(sample)
+        jacknifed_pca.append(eigen_vectors)
+
+    return jacknifed_data, jacknifed_pca
 
 def bootstraped_indicators_to_dataframe(
     bootstraped_indicators: List[NDArray],
