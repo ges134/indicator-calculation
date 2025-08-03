@@ -26,9 +26,10 @@ from contribution import make_loading_plot
 from confidence import (
     bootstraped_indicators_to_dataframe,
     jacknifed_indicators_to_dataframe,
-    generate_bootstraped_pcas_on_indicators
+    generate_bootstraped_pcas_on_indicators,
+    jacknife_and_apply_pca
 )
-from stats import jacknife, apply_pca
+from stats import apply_pca
 
 def main():
     """
@@ -78,7 +79,7 @@ def main():
 
     print('Computing confidence intervals for the PCA')
     # This is still a work in progress.
-    jacknifed_indicators = jacknife(indicators_data)
+    jacknifed_indicators, jacknifed_pcas = jacknife_and_apply_pca(indicators_data)
     jacknifed_indicators_dataframe = jacknifed_indicators_to_dataframe(
         jacknifed_indicators,
         codes
@@ -94,6 +95,7 @@ def main():
     # This will be removed afterwards
     print('Test mean of pcas')
     print(mean(bootstraped_pcas, axis=0))
+    print(mean(jacknifed_pcas, axis=0))
 
     print('Computing AHP')
     scores = get_scores_for_indicators(config)

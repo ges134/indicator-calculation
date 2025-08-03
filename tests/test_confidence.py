@@ -10,9 +10,11 @@ from confidence import (
     bootstraped_indicators_to_dataframe,
     jacknifed_indicators_to_dataframe,
     bootstrap_and_apply_pca,
-    generate_bootstraped_pcas_on_indicators
+    generate_bootstraped_pcas_on_indicators,
+    jacknife_and_apply_pca
 )
 from stats import jacknife, apply_pca
+from data import load_file
 
 DATA = array([
     [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
@@ -103,6 +105,29 @@ class TestConfidence(TestCase):
         # Assert
         self.assertEqual(len(bootstraped_results), NUMBER_OF_SAMPLES)
         self.assertEqual(len(pcas_results), NUMBER_OF_SAMPLES)
+
+    def test_jacknife_and_apply_pca(self):
+        """
+        Tests the method `jacknifed_and_apply_pca` under the normal scenario.
+        """
+
+        # Arrange
+        jacknifed_expected_raw_data = load_file('tests/jacknifed-expected.csv')
+        data = [
+            [float(r) for r in l.split(',')[2:]] for l in jacknifed_expected_raw_data.splitlines()
+        ]
+        jacknifed_expected = []
+        for i in range(0, len(data), 6):
+            jacknifed_expected.append(
+                data[i:i+6]
+            )
+
+        # Act
+        jacknifed_data, jacknifed_pca = jacknife_and_apply_pca(DATA)
+
+        # Assert
+        self.assertEqual(len(jacknifed_data), len(jacknifed_pca))
+        self.assertTrue(allclose(abs(array(jacknifed_expected)), abs(array(jacknifed_pca))))
 
     def test_bootstraped_indicators_to_dataframe(self):
         """
