@@ -3,32 +3,13 @@ This module provides automated tests for the `Contribution` module.
 """
 
 from unittest import TestCase
-from numpy import array
 from matplotlib.testing.compare import compare_images
 
-from contribution import make_loading_plot
+from contribution import make_loading_plot, make_loading_plot_with_confidence_intervals
 from stats import apply_pca
+from tests.constants import DATA, EIGEN_VECTORS, LOWER_BOUNDS, UPPER_BOUNDS
 
-DATA = array([
-    [23.44833333, 124.745, 7388, 16.9, 22.05333333, 235.5166667],
-    [13.971, 141.1563333, 5813, 21, 28.95666667, 227.61],
-    [19.55066667, 128.865, 17387.33333, 35.83333333, 31.02, 456.8366667],
-    [22.23266667, 166.1116667, 2678, 19.76666667, 53.58333333, 179.0466667],
-    [16.79066667, 174.826, 3186.666667, 11.9, 18.45, 327.9333333],
-    [15.58633333, 144.378, 4857.666667, 19.56666667, 26.66666667, 241.21],
-    [23.15966667, 122.4816667, 3606, 17.26666667, 26.27333333, 223.6866667],
-    [27.29866667, 106.2463333, 16051, 23.16666667, 4.963333333, 389.16],
-    [12.92033333, 123.4203333, 4526, 30.1, 49.04333333, 236.73],
-    [48.67133333, 87.935, 22201.66667, 16, 0.333333333, 233.8833333],
-    [13.036, 144.3146667, 4847, 18.63333333, 18.36666667, 195.5966667],
-    [15.44266667, 249.443, 3109.666667, 21.23333333, 13.12, 212.54],
-    [11.09133333, 157.6246667, 2833, 26.13333333, 19.37, 181.11],
-    [16.36666667, 106.1196667, 1132, 27.23333333, 3.816666667, 519.9066667],
-    [11.40066667, 110.0233333, 5435.666667, 19.76666667, 57.49666667, 203.06],
-    [15.81566667, 136.939, 1528.333333, 22.16666667, 19.69, 225.14],
-    [13.34166667, 178.6033333, 3400.333333, 15.53333333, 13.67, 261.5933333],
-    [13.693, 156.29, 2190, 15.36666667, 17.76666667, 416.7166667]
-])
+CODES = ['EMA', 'PDR', 'GMR', 'TRP', 'NDE', 'PMS']
 
 class TestContribution(TestCase):
     """
@@ -42,15 +23,36 @@ class TestContribution(TestCase):
 
         # Arrange
         _, eigen_vectors, _ = apply_pca(DATA)
-        codes = ['EMA', 'PDR', 'GMR', 'TRP', 'NDE', 'PMS']
 
         # Act
-        make_loading_plot(eigen_vectors, codes, './data/tests/contribution_actual.png')
+        make_loading_plot(eigen_vectors, CODES, './data/tests/contribution_actual.png')
 
         # Assert
         results = compare_images(
             'data/tests/contribution_baseline.png',
             'data/tests/contribution_actual.png',
+            0.001
+        )
+        self.assertIsNone(results)
+
+    def test_make_loading_plot_with_confidence_intervals(self):
+        """
+        Tests the method `make_loading_plot_with_confidence_intervals` under the normal scenario.
+        """
+
+        # Act
+        make_loading_plot_with_confidence_intervals(
+            EIGEN_VECTORS,
+            CODES,
+            './data/tests/contribution_intervals_actual.png',
+            LOWER_BOUNDS,
+            UPPER_BOUNDS
+        )
+
+        # Assert
+        results = compare_images(
+            'data/tests/contribution_intervals_baseline.png',
+            'data/tests/contribution_intervals_actual.png',
             0.001
         )
         self.assertIsNone(results)

@@ -176,3 +176,4 @@ data/*.csv
 data/config.json
 data/**/*.png
 !data/tests/contribution_baseline.png
+!data/tests/contribution_intervals_baseline.png

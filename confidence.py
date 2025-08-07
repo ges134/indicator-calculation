@@ -11,8 +11,22 @@ principal component analysis—A case study. Chemometrics and Intelligent Labora
 from typing import List, Tuple
 from pandas import DataFrame
 from tqdm import tqdm
-from numpy import full, hstack, concatenate, abs, argmax, unique
+from numpy import (
+    full,
+    hstack,
+    concatenate,
+    abs,
+    argmax,
+    unique,
+    mean,
+    zeros,
+    power,
+    floor,
+    sort,
+    array
+)
 from numpy.typing import NDArray
+from scipy.stats import Normal, norm
 
 from stats import generate_bootstraped_dataset, apply_pca, correlation_matrix_between_pcas, jacknife
 
@@ -142,6 +156,112 @@ def jacknife_and_apply_pca(indicators: NDArray) -> Tuple[List[NDArray], List[NDA
 
     return jacknifed_data, jacknifed_pca
 
+def confidence_intervals_from_indexes(indexes: NDArray, bootstraped_pcas: NDArray) -> NDArray:
+    """
+    Gives the set of bounds from the given index.
+
+    This method allows to convert the index into part of the confidence interval. It must be called
+    twice, once with the indexes of the lower bounds and another with the sets of the upper bounds.
+    The bounds are located in the bootstraped estimations, which are sorted during the execution of
+    the method.
+
+    Args:
+        - indexes: The set of indexes associated to the bounds.
+        - bootstraped_pcas: The bootstrap estimations. The actual bounds will be returned from this
+            parameter.
+
+    Returns: An array with the bounds of a confidence interval.
+    """
+
+    confidence_intervals = []
+    for i, row in enumerate(indexes):
+        confidence_interval_row = []
+        for j, index in enumerate(row):
+            confidence_interval_row.append(sort(bootstraped_pcas[:, i, j])[index])
+        confidence_intervals.append(confidence_interval_row)
+
+    return array(confidence_intervals)
+
+def produce_confidence_intervals(
+    bootstraped_pcas: NDArray,
+    jacknifed_pcas: NDArray,
+    empiric_eigen_vectors: NDArray,
+    significant_level: float
+) -> Tuple[NDArray, NDArray]:
+    """
+    Makes the confidence intervals of the eigen vectors based on the significant level.
+
+    This methods requires that the bootstraped dataset and the jacknifed dataset has ben generated
+    beforehand. Hence, the methods `bootstrap_and_apply_pca` and `jacknife_and_apply_pca` should
+    have been called beforehand. Furthermore, the empiric eigen vectors are also required and can be
+    generated using `stats.apply_pca`.
+
+    Args:
+        - bootstraped_pcas: The bootstrap estimations. The actual bounds will be returned from this
+            parameter.
+        - jacknifed_pcas: The PCAs of the jacknifed dataset.
+        - empiric_eigen_vector: The eigen vectors of the PCA applied to the data in which the
+            bootstraped dataset was generated.
+        - sigificant_level: A value, between 0 and 1 for the significant level. Recommended values
+            are 0.05 and 0.01.
+
+    Returns: A tuple containing the bounds of the confidence interavals. The first element of the
+        tuple returns the lower bounds while the second returns the upper bounds.    
+    """
+
+    standard_normal_distribution = Normal(mu=0, sigma=1)
+
+    bootstraped_means = mean(bootstraped_pcas, axis=0)
+    number_below_empiric = zeros(bootstraped_means.shape)
+    for sample in bootstraped_pcas:
+        for i, row in enumerate(sample):
+            for j, element in enumerate(row):
+                if element < empiric_eigen_vectors[i, j]:
+                    number_below_empiric[i, j] += 1
+    proportion_below_empiric = number_below_empiric / len(bootstraped_pcas)
+    bias_corrector = standard_normal_distribution.icdf(proportion_below_empiric)
+
+    jacknifed_means = mean(jacknifed_pcas, axis=0)
+    distribution_skewness = sum(power(jacknifed_pcas - jacknifed_means, 3)) \
+        / (6 * power(sum(power(jacknifed_pcas - jacknifed_means, 2)), 3/2))
+
+    significant_level_lower_critical_value = norm.ppf(significant_level / 2)
+    significant_level_upper_critical_value = norm.ppf(1 - (significant_level / 2))
+    lower_confidence_location = standard_normal_distribution.cdf(
+        bias_corrector + (
+            (
+                bias_corrector + significant_level_lower_critical_value
+            ) / (
+                1 - distribution_skewness * (
+                    bias_corrector + significant_level_lower_critical_value
+                )
+            )
+        )
+    )
+    upper_confidence_location = standard_normal_distribution.cdf(
+        bias_corrector + (
+            (
+                bias_corrector + significant_level_upper_critical_value
+            ) / (
+                1 - distribution_skewness * (
+                    bias_corrector + significant_level_upper_critical_value
+                )
+            )
+        )
+    )
+    lower_confidence_index = floor(lower_confidence_location * len(bootstraped_pcas)).astype(int)
+    upper_confidence_index = floor(upper_confidence_location * len(bootstraped_pcas)).astype(int)
+    lower_confidence_intervals = confidence_intervals_from_indexes(
+        lower_confidence_index,
+        bootstraped_pcas
+    )
+    upper_confidence_intervals = confidence_intervals_from_indexes(
+        upper_confidence_index,
+        bootstraped_pcas
+    )
+
+    return (lower_confidence_intervals, upper_confidence_intervals)
+
 def bootstraped_indicators_to_dataframe(
     bootstraped_indicators: List[NDArray],
     codes: List[str]
@@ -180,6 +300,32 @@ def jacknifed_indicators_to_dataframe(
     flattened_indicators = flatten(jacknifed_indicators)
     columns = ['Jacknife number'] + codes
     return DataFrame(flattened_indicators, columns=columns)
+
+def confidence_interval_to_dataframe(
+    lower_confidence_interval: NDArray,
+    upper_confidence_interval: NDArray,
+    codes: List[str]
+) -> DataFrame:
+    """
+    Converts the confidence intervals into a dataframe to be later saved into a CSV file.
+
+    Args:
+        - lower_confidence_interval: The lower bounds of the confidence intervals.
+        - upper_confidence_interval: The upper bounds of the confidence intervals.
+
+    Return: The converted dataframe.
+    """
+
+    dataframe_data = []
+    for i, row in enumerate(lower_confidence_interval):
+        dataframe_data.append([codes[i], 'lb'] + row.tolist())
+    for i, row in enumerate(upper_confidence_interval):
+        dataframe_data.append([codes[i], 'ub'] + row.tolist())
+
+    columns = ['indicator', 'confidence interval bound'] \
+        + [f'PC {i + 1}' for i in range(len(lower_confidence_interval[0]))]
+
+    return DataFrame(dataframe_data, columns=columns)
 
 def flatten(data: List[NDArray]) -> NDArray:
     """

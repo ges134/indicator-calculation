@@ -9,7 +9,7 @@ should be set up in a spreadsheet software. All generated data by the program is
 """
 
 from pandas import DataFrame
-from numpy import mean
+from numpy import array
 
 from merger import merge_datasets, convert_dataset_to_dataframe
 from data import load_config, save_csv
@@ -22,12 +22,14 @@ from subjective import (
     convert_weights_to_dataframe,
     convert_consistency_to_dataframe
 )
-from contribution import make_loading_plot
+from contribution import make_loading_plot, make_loading_plot_with_confidence_intervals
 from confidence import (
     bootstraped_indicators_to_dataframe,
     jacknifed_indicators_to_dataframe,
     generate_bootstraped_pcas_on_indicators,
-    jacknife_and_apply_pca
+    jacknife_and_apply_pca,
+    produce_confidence_intervals,
+    confidence_interval_to_dataframe
 )
 from stats import apply_pca
 
@@ -88,14 +90,48 @@ def main():
         indicators_data,
         eigen_vectors
     )
+    confidence_interval_5 = produce_confidence_intervals(
+        array(bootstraped_pcas),
+        jacknifed_pcas,
+        eigen_vectors,
+        0.05
+    )
+    confidence_interval_1 = produce_confidence_intervals(
+        array(bootstraped_pcas),
+        jacknifed_pcas,
+        eigen_vectors,
+        0.01
+    )
+
+    make_loading_plot_with_confidence_intervals(
+        eigen_vectors[:, :2],
+        codes,
+        './data/contribution-cl05.png',
+        confidence_interval_5[0],
+        confidence_interval_5[1]
+    )
+    make_loading_plot_with_confidence_intervals(
+        eigen_vectors[:, :2],
+        codes,
+        './data/contribution-cl01.png',
+        confidence_interval_1[0],
+        confidence_interval_1[1]
+    )
+
     bootstraped_indicator_dataframe = bootstraped_indicators_to_dataframe(
         bootstraped_indicators,
         codes
     )
-    # This will be removed afterwards
-    print('Test mean of pcas')
-    print(mean(bootstraped_pcas, axis=0))
-    print(mean(jacknifed_pcas, axis=0))
+    confidence_interval_5_dataframe = confidence_interval_to_dataframe(
+        confidence_interval_5[0],
+        confidence_interval_5[1],
+        codes
+    )
+    confidence_interval_1_dataframe = confidence_interval_to_dataframe(
+        confidence_interval_1[0],
+        confidence_interval_1[1],
+        codes
+    )
 
     print('Computing AHP')
     scores = get_scores_for_indicators(config)
@@ -136,6 +172,8 @@ def main():
     save_csv(consistency_dataframe, 'consistency.csv')
     save_csv(bootstraped_indicator_dataframe, 'bootstraped-data.csv')
     save_csv(jacknifed_indicators_dataframe, 'jacknifed-data.csv')
+    save_csv(confidence_interval_5_dataframe, 'confidence-intervals-05.csv')
+    save_csv(confidence_interval_1_dataframe, 'confidence-intervals-01.csv')
 
 
 if __name__ == '__main__':
