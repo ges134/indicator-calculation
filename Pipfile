@@ -9,6 +9,7 @@ pyjstat = "*"
 pandas = "*"
 numpy = "*"
 matplotlib = "*"
+scipy = "*"
 
 [dev-packages]
 pylint = "*"
