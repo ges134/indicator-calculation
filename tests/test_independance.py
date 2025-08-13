@@ -5,9 +5,20 @@ This module provides automated tests for the `Independance` module.
 from unittest import TestCase
 from unittest.mock import patch, Mock
 from pyjstat.pyjstat import Dataset
+from typing import List
+from pandas import DataFrame
+from numpy import array, allclose
 
-from merger import merge_datasets, convert_dataset_to_dataframe
-from independance import get_degrees_of_independance, prepare_dataframe_for_pca
+from merger import (
+    merge_datasets,
+    convert_dataset_to_dataframe,
+    get_observations_with_complete_years
+)
+from independance import (
+    get_degrees_of_independance,
+    prepare_dataframe_for_pca,
+    get_pca_data_from_years
+)
 from data import load_file
 from stats import apply_pca
 from tests.constants import DATA
@@ -33,18 +44,23 @@ class TestIndependance(TestCase):
     This class provides automated tests for the module's methods.
     """
 
+    dataframes: List[DataFrame]
+
+    def setUp(self):
+        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_03_42', ]
+        dataframes = []
+        for code in codes:
+            stub = Dataset.read(load_file(f'tests/{code}.json'))
+            dataframes.append(stub.write('dataframe'))
+        self.dataframes = dataframes
+
     @patch('merger.load_dataset')
     def test_prepare_dataframe_for_pca(self, load_dataset_mock: Mock):
         """
         Tests the method `prepare_dataframe_for_pca` under the normal scenario.
         """
-        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_03_42']
-        dataframes = []
-        for code in codes:
-            stub = Dataset.read(load_file(f'tests/{code}.json'))
-            dataframes.append(stub.write('dataframe'))
 
-        load_dataset_mock.side_effect = dataframes
+        load_dataset_mock.side_effect = self.dataframes
         merged = merge_datasets(CONFIG)
         merged_dataframe = convert_dataset_to_dataframe(merged, CONFIG)
         expected_results = [
@@ -85,6 +101,55 @@ class TestIndependance(TestCase):
         for i, row in enumerate(results):
             for j, value in enumerate(row):
                 self.assertAlmostEqual(value, expected_results[i][j], 6)
+
+    @patch('merger.load_dataset')
+    def test_get_pca_data_from_years(self, load_dataset_mock: Mock):
+        """
+        Tests the method `get_pca_data_from_years` under the nominal scenario.
+        """
+
+        # Arrange
+        load_dataset_mock.side_effect = self.dataframes
+        merged = merge_datasets(CONFIG)
+        merged_dataframe = convert_dataset_to_dataframe(merged, CONFIG)
+        complete_observations = get_observations_with_complete_years(merged_dataframe)
+
+        expected_results = array([
+            [14.008, 2.8933, 5573.0],
+            [16.454, 0.3498, 16907.0],
+            [16.688, 1.0606, 2402.0],
+            [23.335, 2.0947, 3663.0],
+            [15.665, 2.4466, 4858.0],
+            [24.55, 0.6224, 18451.0],
+            [16.361, 2.4966, 3207.0],
+            [12.653, 1.2839, 6712.0],
+            [9.992, 2.7776, 2774.0],
+            [13.778, 3.051, 4836.0],
+            [12.889, 1.1203, 1286.0],
+            [10.661, 3.4606, 2702.0],
+            [16.967, 1.4369, 2897.0],
+            [14.811, 1.0949, 975.0],
+            [17.912, 0.8501, 2327.0],
+            [30.891, 4.0552, 17217.0],
+            [12.148, 0.9558, 1624.0],
+            [12.004, 1.671, 4379.0],
+            [8.321, 4.3448, 8281.0],
+            [23.73, 2.2674, 7008.0],
+            [15.167, 0.6889, 4793.0],
+            [15.348, 1.1846, 1427.0],
+            [23.004, 0.3668, 9012.0],
+            [15.036, 1.5129, 2661.0],
+            [15.488, 1.2133, 1953.0],
+            [48.364, 0.8967, 22359.0],
+            [25.871, 2.0141, 14272.0],
+            [16.669, 0.3109, 6937.0]
+        ])
+
+        # Act
+        results = get_pca_data_from_years(complete_observations, 2016)
+
+        # Assert
+        self.assertTrue(allclose(expected_results, results))
 
     def test_get_degrees_of_independance(self):
         """

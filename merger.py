@@ -143,3 +143,46 @@ def monitor_dataset(reference: DataFrame, merged: DataFrame) -> DataFrame:
     """
     monitered = reference.compare(merged, result_names=('reference', 'new'))
     return monitered
+
+def get_observations_with_complete_years(merged_dataframe: DataFrame) -> DataFrame:
+    """
+    Filters a dataframe to which all countries must have an observation for a given year. If a
+    country has one null value for this year, all the observations for said years are removed.
+
+    Args:
+        - merged_dataframe: The dataframe for the merged indicators.
+    
+    Returns: The dataframe that respects the filter criterion. This means that each year has all the
+        countries with observations on all indicators.
+    """
+
+    complete_observations = merged_dataframe[~merged_dataframe.Country.str.contains('European Union')].dropna()
+    years = complete_observations.Year.unique()
+    number_of_countries = len(complete_observations.Country.unique())
+
+    for year in years:
+        if len(complete_observations[complete_observations.Year == year]) != number_of_countries:
+            complete_observations = complete_observations[complete_observations.Year != year]
+
+    return complete_observations
+
+def get_years_to_compute(complete_observations: DataFrame) -> List[float]:
+    """
+    For a dataframe with complete observations, gets the years to compute a sensitivity for
+    observations years in the PCA.
+
+    Args:
+        - complete_observations: The dataframe to compute the years from. It should have a `Year`
+            column.
+
+    Returns: The three years to compute a sensitivity from. The selected years are the first
+        observed values, the last observed values and the middle value.
+    """
+
+    complete_years = complete_observations.Year.unique()
+    middle_index = round((len(complete_years) - 1) / 2)
+    return [
+        complete_years[0].item(),
+        complete_years[middle_index].item(),
+        complete_years[-1].item()
+    ]

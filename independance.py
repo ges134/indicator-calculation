@@ -16,8 +16,8 @@ def prepare_dataframe_for_pca(indicators: DataFrame) -> NDArray:
     """
     Converts the dataframe of the merged indicators into a `numpy` array for PCA.
 
-    The values are averaged. Any row with at least one column is dropped from the analysis at this
-    stage.
+    The values are averaged. Any row with at least one column with a `nan` is dropped from the
+    analysis at this stage.
 
     Args:
         - indicators: The merged dataset of the indicators.
@@ -29,6 +29,26 @@ def prepare_dataframe_for_pca(indicators: DataFrame) -> NDArray:
     filtered_dataframe = indicators[~indicators.Country.str.contains('European')].dropna()
     filtered_dataframe = filtered_dataframe.groupby(['Country']).mean()
     return filtered_dataframe.iloc[:, 1:].to_numpy()
+
+def get_pca_data_from_years(indicators: DataFrame, year: int) -> NDArray:
+    """
+    Converts a dataframe of merged indocators into a `numpy` array of PCA with all the observations
+    of a given year.
+
+    Any row with at least one column with a `nan` is dropped from the analysis at this stage.
+
+    Args:
+        - indicators: The merged dataset of the indicators.
+        - year: The year to retrieve the indicators from.
+
+    Returns: The indicators without any european agregate to which all rows with at least one null
+        value is removed. The remaining rows represents one year given by the `year` argument. This
+        array is in a `numpy` format.
+    """
+
+    filtered_dataframe = indicators[~indicators.Country.str.contains('European')].dropna()
+    filtered_dataframe = filtered_dataframe[filtered_dataframe.Year == year]
+    return filtered_dataframe.iloc[:, 2:].to_numpy()
 
 def get_degrees_of_independance(eigen_vectors: NDArray) -> Tuple[NDArray, NDArray]:
     """
