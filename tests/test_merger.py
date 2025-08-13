@@ -7,12 +7,15 @@ from unittest.mock import patch, Mock
 from pyjstat.pyjstat import Dataset
 from pandas import DataFrame
 from math import isnan
+from typing import List
 
 from merger import (
     merge_datasets,
     dataset_can_be_merged,
     convert_dataset_to_dataframe,
-    monitor_dataset
+    monitor_dataset,
+    get_observations_with_complete_years,
+    get_years_to_compute
 )
 from data import load_file
 
@@ -49,6 +52,17 @@ class MergerTests(TestCase):
     This class provides automated tests for the module's methods.
     """
 
+    dataframes: List[DataFrame]
+
+    def setUp(self):
+        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_03_42']
+        dataframes = []
+        for code in codes:
+            stub = Dataset.read(load_file(f'tests/{code}.json'))
+            dataframes.append(stub.write('dataframe'))
+
+        self.dataframes = dataframes
+
     @patch('merger.load_dataset')
     def test_merge_datasets(self, load_dataset_mock: Mock):
         """
@@ -56,13 +70,7 @@ class MergerTests(TestCase):
         """
 
         # Arrange
-        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_03_42']
-        dataframes = []
-        for code in codes:
-            stub = Dataset.read(load_file(f'tests/{code}.json'))
-            dataframes.append(stub.write('dataframe'))
-
-        load_dataset_mock.side_effect = dataframes
+        load_dataset_mock.side_effect = self.dataframes
 
         # Act
         results = merge_datasets(CONFIG)
@@ -76,8 +84,8 @@ class MergerTests(TestCase):
 
         verified_row_keys = []
 
-        for row in dataframes[0].itertuples():
-            geopolitical_column_location = dataframes[0].columns.get_loc(
+        for row in self.dataframes[0].itertuples():
+            geopolitical_column_location = self.dataframes[0].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             row_key = f'{row[geopolitical_column_location+1]};{row.Time}'
@@ -88,10 +96,10 @@ class MergerTests(TestCase):
                 self.assertTrue(1 <= len(results[row_key]['values']) <= 5)
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[1][
-            dataframes[1]['Unit of measure'] == UNIT_OF_MEASURE_LABEL
+        for row in self.dataframes[1][
+            self.dataframes[1]['Unit of measure'] == UNIT_OF_MEASURE_LABEL
         ].itertuples():
-            geopolitical_column_location = dataframes[1].columns.get_loc(
+            geopolitical_column_location = self.dataframes[1].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             row_key = f'{row[geopolitical_column_location+1]};{row.Time}'
@@ -102,8 +110,8 @@ class MergerTests(TestCase):
                 self.assertTrue(1 <= len(results[row_key]['values']) <= 5)
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[2].itertuples():
-            geopolitical_column_location = dataframes[2].columns.get_loc(
+        for row in self.dataframes[2].itertuples():
+            geopolitical_column_location = self.dataframes[2].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             row_key = f'{row[geopolitical_column_location+1]};{row.Time}'
@@ -114,11 +122,11 @@ class MergerTests(TestCase):
                 self.assertTrue(1 <= len(results[row_key]['values']) <= 5)
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[3][
-            (dataframes[3]['Age class'] == 'Total') &
-            (dataframes[3]['Unit of measure'] == "Thousand persons")
+        for row in self.dataframes[3][
+            (self.dataframes[3]['Age class'] == 'Total') &
+            (self.dataframes[3]['Unit of measure'] == "Thousand persons")
         ].itertuples():
-            geopolitical_column_location = dataframes[3].columns.get_loc(
+            geopolitical_column_location = self.dataframes[3].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             row_key = f'{row[geopolitical_column_location+1]};{row.Time}'
@@ -129,10 +137,10 @@ class MergerTests(TestCase):
                 self.assertTrue(1 <= len(results[row_key]['values']) <= 5)
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[4][
-            dataframes[4]['Type of mortality'] == 'Preventable mortality'
+        for row in self.dataframes[4][
+            self.dataframes[4]['Type of mortality'] == 'Preventable mortality'
         ].itertuples():
-            geopolitical_column_location = dataframes[4].columns.get_loc(
+            geopolitical_column_location = self.dataframes[4].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             row_key = f'{row[geopolitical_column_location+1]};{row.Time}'
@@ -209,13 +217,7 @@ class MergerTests(TestCase):
         """
 
         # Arrange
-        codes = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_03_42']
-        dataframes = []
-        for code in codes:
-            stub = Dataset.read(load_file(f'tests/{code}.json'))
-            dataframes.append(stub.write('dataframe'))
-
-        load_dataset_mock.side_effect = dataframes
+        load_dataset_mock.side_effect = self.dataframes
 
         merged = merge_datasets(CONFIG)
 
@@ -225,8 +227,8 @@ class MergerTests(TestCase):
         # Assert
         verified_row_keys = []
 
-        for row in dataframes[0].itertuples():
-            geopolitical_column_location = dataframes[0].columns.get_loc(
+        for row in self.dataframes[0].itertuples():
+            geopolitical_column_location = self.dataframes[0].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             country = row[geopolitical_column_location+1]
@@ -241,10 +243,10 @@ class MergerTests(TestCase):
             if row_key not in verified_row_keys:
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[1][
-            dataframes[1]['Unit of measure'] == UNIT_OF_MEASURE_LABEL
+        for row in self.dataframes[1][
+            self.dataframes[1]['Unit of measure'] == UNIT_OF_MEASURE_LABEL
         ].itertuples():
-            geopolitical_column_location = dataframes[1].columns.get_loc(
+            geopolitical_column_location = self.dataframes[1].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             country = row[geopolitical_column_location+1]
@@ -259,8 +261,8 @@ class MergerTests(TestCase):
             if row_key not in verified_row_keys:
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[2].itertuples():
-            geopolitical_column_location = dataframes[2].columns.get_loc(
+        for row in self.dataframes[2].itertuples():
+            geopolitical_column_location = self.dataframes[2].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             country = row[geopolitical_column_location+1]
@@ -275,11 +277,11 @@ class MergerTests(TestCase):
             if row_key not in verified_row_keys:
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[3][
-            (dataframes[3]['Age class'] == 'Total') &
-            (dataframes[3]['Unit of measure'] == "Thousand persons")
+        for row in self.dataframes[3][
+            (self.dataframes[3]['Age class'] == 'Total') &
+            (self.dataframes[3]['Unit of measure'] == "Thousand persons")
         ].itertuples():
-            geopolitical_column_location = dataframes[3].columns.get_loc(
+            geopolitical_column_location = self.dataframes[3].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             country = row[geopolitical_column_location+1]
@@ -294,10 +296,10 @@ class MergerTests(TestCase):
             if row_key not in verified_row_keys:
                 verified_row_keys.append(row_key)
 
-        for row in dataframes[4][
-            dataframes[4]['Type of mortality'] == 'Preventable mortality'
+        for row in self.dataframes[4][
+            self.dataframes[4]['Type of mortality'] == 'Preventable mortality'
         ].itertuples():
-            geopolitical_column_location = dataframes[4].columns.get_loc(
+            geopolitical_column_location = self.dataframes[4].columns.get_loc(
                 'Geopolitical entity (reporting)'
             )
             country = row[geopolitical_column_location+1]
@@ -349,3 +351,51 @@ class MergerTests(TestCase):
         self.assertEqual(20.0, results.loc[72, 'PDR'].new)
         self.assertTrue(isnan(results.loc[72, 'PMS'].reference))
         self.assertTrue(isnan(results.loc[72, 'PMS'].new))
+
+    @patch('merger.load_dataset')
+    def test_get_observations_with_complete_years(self, load_dataset_mock: Mock):
+        """
+        Tests the method `get_observations_with_complete_years` under the normal scenario
+        """
+
+        # Arrange
+        load_dataset_mock.side_effect = self.dataframes
+        merged = merge_datasets(CONFIG)
+        merged_dataframe = convert_dataset_to_dataframe(merged, CONFIG)
+        expected_years = [2016, 2018, 2020]
+
+        # Act
+        complete_observations = get_observations_with_complete_years(merged_dataframe)
+
+        # Assert
+        years = complete_observations.Year.unique()
+        self.assertEqual(
+            0,
+            len(complete_observations[complete_observations.Country.str.contains('European Union')])
+        )
+        self.assertFalse(complete_observations.isnull().any().any())
+        self.assertEqual(expected_years, years.tolist())
+        for year in years:
+            self.assertEqual(
+                28,
+                len(complete_observations[complete_observations.Year == year])
+            )
+
+    @patch('merger.load_dataset')
+    def test_get_years_to_compute(self, load_dataset_mock: Mock):
+        """
+        Tests the method `get_observations_with_complete_years` under the normal scenario
+        """
+
+        # Arrange
+        load_dataset_mock.side_effect = self.dataframes
+        merged = merge_datasets(CONFIG)
+        merged_dataframe = convert_dataset_to_dataframe(merged, CONFIG)
+        expected_years = [2016, 2018, 2020]
+        complete_observations = get_observations_with_complete_years(merged_dataframe)
+
+        # Act
+        years = get_years_to_compute(complete_observations)
+
+        # Assert
+        self.assertEqual(expected_years, years)

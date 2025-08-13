@@ -128,3 +128,21 @@ The program will do the following.
 1. Save said dataset.
 
 The saved file is named `monitored.csv` and follows the [Pandas `compare` format](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.compare.html). In summary, if the file is empty, no changes were reported. If there is a change, the dataset will only reflect those changes. Hence, not all indicators and not all rows may be present in the monitored file. The changed indicators will appear with the indicator identifier and two column, `reference` and `new`. The former referes to the reference dataset, provided with the execution program, while the latter is the one that is associated with the current program execution. The row number appears as the first column, which can be used to track changes. `NaN` may appear to indicate that no changes were observer for this indicator in this row.
+
+## Sensitivity for the observed years
+
+A subprogram allows to apply PCA and compute degrees of independances for three observed years, the first, the middle and the last, given that the year has observations for all countries in the datasets. To use this subprogram, the configuration file must be provided. The following command can run the program:
+
+```sh
+pipenv run py years.py
+```
+
+The program will do the following.
+
+1. Load the configuration
+1. Obtain the dataset for the indicators
+1. Filter non complete years
+1. Compute PCA and degrees of independance for three years.
+1. Save computed files.
+
+The saved files are `YEAR-eigen-vectors.csv` and `YEAR-independance-degree.csv`, which have the same format as the main execution program, but the results were computed with the given YEAR.
