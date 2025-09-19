@@ -5,7 +5,13 @@ This module provides automated tests for the `Stats` module.
 from unittest import TestCase
 from numpy import array, allclose
 
-from stats import generate_bootstraped_dataset, jacknife, apply_pca, correlation_matrix_between_pcas
+from stats import (
+    generate_bootstraped_dataset,
+    jacknife,
+    apply_pca,
+    correlation_matrix_between_pcas,
+    test_for_normality
+)
 from tests.constants import DATA
 
 class TestStats(TestCase):
@@ -106,3 +112,22 @@ class TestStats(TestCase):
 
         # Assert
         self.assertTrue(allclose(expected_results, correlation_matrix))
+
+    def test_test_for_normality(self):
+        """
+        Tests the `test_for_normality` under the normal scenario.
+        """
+
+        # Arrange
+        expected_results = [False, True, False, True, True, False]
+
+        # Act
+        results = test_for_normality(DATA)
+
+        # Assert
+        self.assertEqual(expected_results[0], results[0])
+        self.assertEqual(expected_results[1], results[1])
+        self.assertEqual(expected_results[2], results[2])
+        self.assertEqual(expected_results[3], results[3])
+        self.assertEqual(expected_results[4], results[4])
+        self.assertEqual(expected_results[5], results[5])

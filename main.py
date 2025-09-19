@@ -31,7 +31,7 @@ from confidence import (
     produce_confidence_intervals,
     confidence_interval_to_dataframe
 )
-from stats import apply_pca
+from stats import apply_pca, test_for_normality
 
 def main():
     """
@@ -81,6 +81,8 @@ def main():
 
     print('Computing confidence intervals for the PCA')
     # This is still a work in progress.
+    indicators_are_normal = test_for_normality(indicators_data)
+    print(indicators_are_normal)
     jacknifed_indicators, jacknifed_pcas = jacknife_and_apply_pca(indicators_data)
     jacknifed_indicators_dataframe = jacknifed_indicators_to_dataframe(
         jacknifed_indicators,
