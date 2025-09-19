@@ -9,6 +9,7 @@ from numpy.linalg import eig
 from numpy.typing import NDArray
 from numpy.random import default_rng
 from typing import List, Tuple
+from scipy.stats import anderson
 
 def generate_bootstraped_dataset(data: NDArray) -> NDArray:
     """
@@ -118,3 +119,26 @@ def correlation_matrix_between_pcas(eigen_vectors_a: NDArray, eigen_vectors_b: N
         correlation_matrix.append(row)
 
     return array(correlation_matrix)
+
+def test_for_normality(data: NDArray) -> List[bool]:
+    """
+    Looks if each column of the data follows a normal distribution following the Anderson-Darling
+    test.
+
+    Args:
+        - data: The dataset to test for normality. Each row should represent observations while each
+            column should represent parameters. In the case of this program, this would mean each
+            row represents countries while each column represent indicators.
+    
+    Returns: An array in which each element corresponds to the normality of the associated column.
+        If it follows a normal distribution, the element will be `True`.
+    """
+    is_normal = []
+    _, columns = data.shape
+    for i in range(columns):
+        normality_test_results = anderson(data[:, i])
+        is_normal.append(
+            normality_test_results.statistic < normality_test_results.critical_values[2]
+        )
+
+    return is_normal
