@@ -31,7 +31,7 @@ from confidence import (
     produce_confidence_intervals,
     confidence_interval_to_dataframe
 )
-from stats import apply_pca, test_for_normality
+from stats import apply_pca, boxcox_transform
 
 def main():
     """
@@ -80,40 +80,39 @@ def main():
     independance_matrix_dataframe = DataFrame(independance_matrix, columns=codes)
 
     print('Computing confidence intervals for the PCA')
-    # This is still a work in progress.
-    indicators_are_normal = test_for_normality(indicators_data)
-    print(indicators_are_normal)
-    jacknifed_indicators, jacknifed_pcas = jacknife_and_apply_pca(indicators_data)
+    transformed_indicators = boxcox_transform(indicators_data)
+    _, empiric_eigen_vector, _ = apply_pca(transformed_indicators)
+    jacknifed_indicators, jacknifed_pcas = jacknife_and_apply_pca(transformed_indicators)
     jacknifed_indicators_dataframe = jacknifed_indicators_to_dataframe(
         jacknifed_indicators,
         codes
     )
     bootstraped_indicators, bootstraped_pcas = generate_bootstraped_pcas_on_indicators(
-        indicators_data,
-        eigen_vectors
+        transformed_indicators,
+        empiric_eigen_vector
     )
     confidence_interval_5 = produce_confidence_intervals(
         array(bootstraped_pcas),
         jacknifed_pcas,
-        eigen_vectors,
+        empiric_eigen_vector,
         0.05
     )
     confidence_interval_1 = produce_confidence_intervals(
         array(bootstraped_pcas),
         jacknifed_pcas,
-        eigen_vectors,
+        empiric_eigen_vector,
         0.01
     )
 
     make_loading_plot_with_confidence_intervals(
-        eigen_vectors[:, :2],
+        empiric_eigen_vector[:, :2],
         codes,
         './data/contribution-cl05.png',
         confidence_interval_5[0],
         confidence_interval_5[1]
     )
     make_loading_plot_with_confidence_intervals(
-        eigen_vectors[:, :2],
+        empiric_eigen_vector[:, :2],
         codes,
         './data/contribution-cl01.png',
         confidence_interval_1[0],

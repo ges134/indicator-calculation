@@ -3,14 +3,15 @@ This module provides automated tests for the `Stats` module.
 """
 
 from unittest import TestCase
-from numpy import array, allclose
+from numpy import array, allclose, copy
 
 from stats import (
     generate_bootstraped_dataset,
     jacknife,
     apply_pca,
     correlation_matrix_between_pcas,
-    test_for_normality
+    test_for_normality,
+    boxcox_transform
 )
 from tests.constants import DATA
 
@@ -131,3 +132,80 @@ class TestStats(TestCase):
         self.assertEqual(expected_results[3], results[3])
         self.assertEqual(expected_results[4], results[4])
         self.assertEqual(expected_results[5], results[5])
+
+    def test_boxcox_transform(self):
+        """
+        Tests the `boxcox_transform` under the normal scenario.
+        """
+
+        # Arrange
+        expected_data = copy(DATA)
+        em_normalized = [
+            0.0018188,
+            0.0051232,
+            0.0026162,
+            0.0020231,
+            0.0035470,
+            0.0041163,
+            0.0018644,
+            0.0013419,
+            0.0059904,
+            0.0004221,
+            0.0058845,
+            0.0041933,
+            0.0081289,
+            0.0037332,
+            0.0076938,
+            0.0039978,
+            0.0056180,
+            0.0053334
+        ]
+        gmrp_normalized = [
+            0.0116342,
+            0.0131160,
+            0.0075837,
+            0.0193239,
+            0.0177146,
+            0.0143478,
+            0.0166528,
+            0.0078931,
+            0.0148642,
+            0.0067113,
+            0.0143636,
+            0.0179326,
+            0.0187878,
+            0.0297219,
+            0.0135636,
+            0.0255794,
+            0.0171490,
+            0.0213687
+        ]
+        mets_normalized = [
+            0.0000180,
+            0.0000193,
+            0.0000048,
+            0.0000312,
+            0.0000093,
+            0.0000172,
+            0.0000200,
+            0.0000066,
+            0.0000178,
+            0.0000183,
+            0.0000261,
+            0.0000221,
+            0.0000305,
+            0.0000037,
+            0.0000243,
+            0.0000197,
+            0.0000146,
+            0.0000058
+        ]
+        expected_data[:, 0] = em_normalized
+        expected_data[:, 2] = gmrp_normalized
+        expected_data[:, 5] = mets_normalized
+
+        # Act
+        transformed = boxcox_transform(DATA)
+
+        # Assert
+        self.assertTrue(allclose(expected_data, transformed, 7))

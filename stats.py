@@ -4,12 +4,12 @@ mainly used to realize principal component analysis. This method performs this a
 data manipulation to compute confidence intervals.
 """
 
-from numpy import delete, array, mean, std, corrcoef, argmax, sign, newaxis
+from numpy import delete, array, mean, std, corrcoef, argmax, sign, newaxis, copy
 from numpy.linalg import eig
 from numpy.typing import NDArray
 from numpy.random import default_rng
 from typing import List, Tuple
-from scipy.stats import anderson
+from scipy.stats import anderson, boxcox
 
 def generate_bootstraped_dataset(data: NDArray) -> NDArray:
     """
@@ -142,3 +142,27 @@ def test_for_normality(data: NDArray) -> List[bool]:
         )
 
     return is_normal
+
+def boxcox_transform(data: NDArray) -> List[bool]:
+    """
+    Transform the rows in the dataset where the data is not normal. The method makes the test
+    for normality.
+
+    Args:
+        - data: The data to transform.
+    
+    Returns: The transformed data where columns are replaced with their normalized values if they
+        do not follow a normal distribution and are unchanged if they do. If the data has not
+        been modified by the method, it means that all the variables are under a normal
+        distribution.
+    """
+
+    copied_data = copy(data)
+    is_normal = test_for_normality(copied_data)
+    for i, normality in enumerate(is_normal):
+        if not normality:
+            column = copied_data[:, i]
+            transformed, _ = boxcox(column)
+            copied_data[:, i] = transformed
+
+    return copied_data
