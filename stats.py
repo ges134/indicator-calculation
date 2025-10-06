@@ -162,7 +162,8 @@ def boxcox_transform(data: NDArray) -> List[bool]:
     for i, normality in enumerate(is_normal):
         if not normality:
             column = copied_data[:, i]
-            transformed, _ = boxcox(column)
-            copied_data[:, i] = transformed
+            if 0 not in column:
+                transformed, _ = boxcox(column)
+                copied_data[:, i] = transformed
 
     return copied_data
