@@ -133,6 +133,10 @@ def main():
         confidence_interval_1[1],
         codes
     )
+    empiric_eigen_vector_dataframe = DataFrame(
+        eigen_vectors,
+        columns=[f'PC {i+1}' for i in range(len(eigen_vectors))]
+    )
 
     print('Computing AHP')
     scores = get_scores_for_indicators(config)
@@ -175,6 +179,7 @@ def main():
     save_csv(jacknifed_indicators_dataframe, 'jacknifed-data.csv')
     save_csv(confidence_interval_5_dataframe, 'confidence-intervals-05.csv')
     save_csv(confidence_interval_1_dataframe, 'confidence-intervals-01.csv')
+    save_csv(empiric_eigen_vector_dataframe, 'empiric-eigen-vectors.csv')
 
 
 if __name__ == '__main__':

@@ -143,7 +143,7 @@ def test_for_normality(data: NDArray) -> List[bool]:
 
     return is_normal
 
-def boxcox_transform(data: NDArray) -> List[bool]:
+def boxcox_transform(data: NDArray) -> NDArray:
     """
     Transform the rows in the dataset where the data is not normal. The method makes the test
     for normality.
