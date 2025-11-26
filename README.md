@@ -103,6 +103,7 @@ The program saves multiple results data and one figure. They are detailed below:
 - `economic-comparison-matrix.csv`: The comparison matrix for the economic sustainability pillar.
 - `eigen-values.csv`: The eigen values of each computed principal component.
 - `eigen-vectors.csv`: The eigen vectors of each computed principal component.
+- `empiric-eigen-vectors.csv`: The eigenvectors of each computed principal component with data noramlization for bootstraping.
 - `environmental-comparison-matrix.csv`: The comparison matrix for the environmental sustainability pillar.
 - `explained-variance.csv`: The explained variance of each computed principal componenent.
 - `independance_degree.csv`: The degree of independance between each indicators.
