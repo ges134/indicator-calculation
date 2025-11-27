@@ -1,7 +1,7 @@
 """
-This module simulates an AHP for the indicators that are studied. This gives the subjective weight
-for the integrated objective-subjective method that is being developed. The weights are
-determined by a comparison of indicators to each sustainability pillars.
+This module simulates an AHP for the indicators under study. This module provides the subjective
+weight for the integrated objective-subjective method under development. The weights are determined
+by comparing indicators to each sustainability pillar.
 """
 
 from typing import Dict, Tuple, List
@@ -21,34 +21,34 @@ PILLARS_COMPARISON_MATRIX = [
 
 def get_subjective_weights(comparison_matrices: Dict) -> Tuple[Dict, Dict, List[float]]:
     """
-    From the comparison matrices, this method creates the weights for the subjective approach of
-    the integrated objective-subjective method under development.
+    From the comparison matrices, this method creates the weights for the subjective approach of the
+    integrated objective-subjective method.
 
-    This is done by AHP. This method focuses on the conversion of comparison matrices to weights.
-    The matrices being converted are the social, economic, environemental and sustainability pillar
-    matrices.
+    AHP does this. This method focuses on converting comparison matrices into weights. The matrices
+    being converted are the social, economic, environmental and sustainability pillar matrices.
 
     Args:
-        - comparison_matrices: A dictionnary containing the matrices of social, economic and
+        - comparison_matrices: A dictionary containing the matrices of social, economic and
             environmental comparisons.
 
     Returns: A tuple containing the weights per sustainability pillars (with the weights of the
-        pillars itself in another key), the consistency analysis per sustainbility pillars (with the
-        weights of the pillars itself in another key) and the final weights.
+        pillars themselves in another key), the consistency analysis per sustainability pillars 
+        (with the weights of the pillars themselves in another key, and the final weights. The 
+        consistency analysis is deprecated as it is not used in the study.
 
-        The weight vector is in the format of a dictionnary, vectors are inside the key of the
+        The weight vector is in dictionary format; vectors are stored under the key of the
         corresponding pillar. For the weights of the pillars themselves, the key `'pillar'` can be
-        used. The vector gives the weight of an indicator in an index basis. The keys associated to
-        the indices must be computed outside this method.
+        used. The vector gives the weight of an indicator relative to the index. The keys associated
+        with the indices must be computed outside this method.
 
-        The consistency analysis dictionnary in which the consistency analysis is inside the key of
-        the corresponding pillar. For the consistency analysis of the pillars themselves, the key 
-        `'pillar'` can be used. The value is another dictionnary in which the key `'eigen_value'`
-        gives the eigen value for this AHP, `'index'` gives the consistency index and `'ratio'`
-        gives the consistency ratio.
+        The consistency analysis dictionary, in which the consistency analysis is inside the key of
+        the corresponding pillar. For the consistency analysis of the pillars themselves, the key
+        `'pillar'` can be used. The value is another dictionary, where the key `'eigen_value'` gives
+        the eigenvalue for this AHP, `'index'` gives the consistency index, and `'ratio'` gives the
+        consistency ratio.
 
-        The final weights is in the format of an array. It gives the final weight of an indicator in
-        an index basis. The indices must be computed outside this method.
+        The final weights are in array format. It gives the final weight of an indicator on an index
+        basis. The indices must be computed outside this method.
     """
 
     weight_vectors = {
@@ -115,36 +115,35 @@ def get_subjective_weights(comparison_matrices: Dict) -> Tuple[Dict, Dict, List[
 
 def get_scores_for_indicators(config: Dict) -> Dict:
     """
-    Converts the indicators score into a Likert scale to use for AHP.
+    Converts the indicator's score to a Likert scale for AHP.
 
     The indicators are scored between 0 and 3 with the following definitions for each sustainability
     pillar:
-    - 0: The indicator does not cover this pillar.
-    - 1: The indicator covers the pillar, but it is not a considered as the main focus of the
-        indicator.
-    - 2: The indicator covers the pillar and shares its main focus with another pillar.
-    - 3: The indicator covers the pillar and its the main focus.
+    - 0: This indicator does not mention the sustainable development pillar.
+    - 1: This indicator mentions the sustainable development pillar.
+    - 2: The sustainable development pillar is one of the primary focuses of this indicator.
+    - 3: The sustainable development pillar is the sole primary focus of this indicator
 
-    The indicators score must be computed beforehand and must be provided in the configuration file.
-    This method uses these score to create a Liket scale to use for AHP. Each pillar is associated
-    with a score, 3 for the pillar and 1 for the other pillars. Then, a five point score is computed
-    with the following rules:
+    The indicator's score must be computed in advance and provided in the configuration file. This
+    method uses these scores to create a Likert scale to use for AHP. Each pillar is associated with
+    a score: 3 for the pillar and 1 for the others. Then, a five-point score is computed with the
+    following rules:
     - 1: The indicator has a score of 0 or 1 for the pillar
     - 3: The indicator has a score of 2 for the pillar
-    - 5: The indicator has a score of 3 for the pillar. A difference of 2 points is observed for the
-        other pillars.
-    - 7: The indicator has a score of 3 for the pillar. A difference of 1 point is observed for the
-        other pillars.
+    - 5: The indicator has a score of 3 for the pillar. A 2-point difference is observed for the 
+    other pillars.
+    - 7: The indicator has a score of 3 for the pillar. A 1-point difference is observed for the
+    other pillars.
     - 9: The indicator is a perfect match with the pillar.
 
     Args:
         - config: The configuration file for this program execution. It should provide an identifier
             and the pillars scores under the keys `'social'`, `'economic'` and `'environmental'`.
-            The scores should be between 0 and 3.
-    Returns:
-        A dictionnary with the Likert scale. In this dictionnary, each indicator identifier
-        represents the key. The value is another dictionnary to which each pillar is a key and the
-        value is the Likert scale value for this pillar.
+            The scores must range from 0 to 3.
+
+    Returns: A dictionary with the Likert scale. In this dictionary, each indicator identifier
+        represents the key. The value is another dictionary, with each pillar as a key and the
+        Likert scale value for that pillar as the value.
     """
 
     scores = {}
@@ -202,16 +201,16 @@ def get_comparison_matrices(scores: Dict) -> Dict:
     """
     Converts Likert scores into comparison matrices.
 
-    This take the Likert scores and substract the values so that the lowest Likert score is one and
-    the highest represents the difference. The comparison matrix is then built using AHP
+    This method takes the Likert scores and subtracts the values so that the lowest Likert score is
+    1 and the highest represents the difference. The comparison matrix is then built using AHP 
     methodology.
 
     Args:
-        - scores: The Likert scale of each indicator. This can be computed with the
+        - scores: The Likert scale of each indicator. This scale can be computed with the
             `get_scores_for_indicators` method.
     
-    Returns: A dictionnary in which the pillars are key and the values are the comparison matrices.
-        This is a square matrix of the size of the number of indicators.
+    Returns: A dictionary in which the pillars are keys and the values are the comparison matrices.
+        Each matrix is a square matrix of size equal to the number of indicators.
     """
 
     comparison_matrices = {
@@ -243,19 +242,19 @@ def get_comparison_matrices(scores: Dict) -> Dict:
 
 def get_weights_from_matrix(comparison_matrix: NDArray) -> Tuple[float, NDArray]:
     """
-    Gets the weights and the associated eigen value from a given comparison matrix.
+    Gets the weights and the associated eigenvalue from a given comparison matrix.
 
-    Per AHP methodology, the maximal real eigen value, and its corresponding eigen vector gives the
-    weights associated to a comparison matrix. These values are returned by the program.
+    In the AHP methodology, the largest real eigenvalue and its corresponding eigenvector give the
+    weights associated with a comparison matrix. The program returns these values.
 
     Args:
-        - comparison_matrix: A comparison matrix. It should be a square matrix in which the diagonal
-            is one and the values are reprocicated between the upper and the lower triangle. The
-            method `get_comparison_matrices` can generate such matrices although it is not a
-            prerequiste to run the method beforehand.
+        - comparison_matrix: A comparison matrix. It should be a square matrix with the diagonal
+            equal to 1, and the values reciprocated between the upper and lower triangles. The
+            method `get_comparison_matrices` can generate such matrices, although it is not a
+            prerequisite to run the method beforehand.
 
-    Returns: A tuple in which the first value is the eigen value of the weights and the second value
-        is the weights associated to that comparison matrix.
+    Returns: A tuple in which the first value is the eigenvalue of the weights and the second value
+        is the weights associated with that comparison matrix.
     """
 
     eigen_values, eigen_vectors = eig(comparison_matrix)
@@ -276,9 +275,11 @@ def generate_random_comparison_matrix(size: int) -> NDArray:
     """
     Generates a random comparison matrix to compute the random index.
 
-    The upper triangle of the random matrix is generated by drawing random values on the possibles 
-    values, ranging from 1 to 9 and including their reciprocal. The lower triangle is the reciprocal
-    of the lower triangle. The diagonal is set to one.
+    The upper triangle of the random matrix is generated by drawing random values from the set 
+    {1, 2, 3, 4, 5, 6, 7, 8, 9, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9}. The lower triangle is the 
+    reciprocal of the upper triangle. The diagonal is set to one.
+
+    This method is deprecated as the consistency analysis is not used in the study.
 
     Args:
         - size: The size of the random comparison matrix to generate.
@@ -302,10 +303,12 @@ def generate_random_comparison_matrix(size: int) -> NDArray:
 
 def get_consistency_index(eigen_value: float, size: int) -> float:
     """
-    Computes the consistency index for a comparison matrix of given size with given eigen value.
+    Computes the consistency index for a comparison matrix of given size with given eigenvalue.
+
+    This method is deprecated as the consistency analysis is not used in the study.
 
     Args:
-        - eigen_value: The eigen value associated to this comparison matrix's weights.
+        - eigen_value: The eigenvalue associated with this comparison matrix's weights.
         - size: The size of the comparison matrix.
 
     Returns: The consistency index, as described by AHP.
@@ -323,14 +326,15 @@ def get_random_index(size: int) -> float:
     random comparison matrices are generated with `generate_random_comparison_matrix`. Their
     consistencies are then averaged to give the random index.
 
-    It is possible that the random index is different of the one reported by Saaty. The confidence
-    interval is based on a 99% confidence level. This method was programmed since the usage will
-    may require the computation of comparison matrices that have an order higher than 15, which is 
-    the higest order reported by Saaty. As a comparison, the highest reported by Donegan & Dodd 
-    (1991) is 20 before jumping units.
+    The random index may be different from the one reported by Saaty. The confidence interval is
+    based on a 99% confidence level. This method was programmed because the usage may require the
+    computation of comparison matrices with orders higher than 15, the highest reported by Saaty.
+    As a comparison, the highest reported by Donegan & Dodd (1991) is 20 before jumping units.
 
-    Donegan & Dodd's study can be found with the following URL:
+    Donegan & Dodd's study can be found at the following URL:
     https://www.sciencedirect.com/science/article/pii/089571779190098R
+
+    This method is deprecated as the consistency analysis is not used in the study.
 
     Args:
         - size: The size of the random index.
@@ -348,10 +352,12 @@ def get_random_index(size: int) -> float:
 
 def get_consistency_ratio(eigen_value: float, size: int) -> Tuple[float, float]:
     """
-    Computes the consistency ratio for a comparison matrix of given size with given eigen value.
+    Computes the consistency ratio for a comparison matrix of given size with given eigenvalue.
+    
+    This method is deprecated as the consistency analysis is not used in the study.
 
     Args:
-        - eigen_value: The eigen value associated to this comparison matrix's weights.
+        - eigen_value: The eigenvalue associated with this comparison matrix's weights.
         - size: The size of the comparison matrix.
 
     Returns: The consistency ratio, as described by AHP.
@@ -363,8 +369,7 @@ def get_consistency_ratio(eigen_value: float, size: int) -> Tuple[float, float]:
 
 def convert_scores_to_dataframe(scores: Dict) -> DataFrame:
     """
-    Converts the Likert scores into a Pandas `DataFrame` so that it can be saved into a file
-    afterwards.
+    Converts the Likert scores into a Pandas `DataFrame` for saving to a file later.
 
     Args:
         - scores: The Likert scores obtained through `get_scores_for_indicator`.
@@ -390,11 +395,11 @@ def convert_weights_to_dataframe(
     final_weights: List
 ) -> DataFrame:
     """
-    Converts the weights into a Pandas `DataFrame` so that it can be saved into a file afterwards.
+    Converts the weights to a Pandas `DataFrame` so they can be saved to a file afterward.
 
     Args:
         - indicators: The list of indicators used in this program execution.
-        - weight_vectors: The dictionnary of weights obtained through `get_subjective_weights`.
+        - weight_vectors: The dictionary of weights obtained through `get_subjective_weights`.
         - final_weights: The final weights of indicators obtained through `get_subjective_weights`.
 
     Returns: the converted DataFrame.
@@ -414,11 +419,12 @@ def convert_weights_to_dataframe(
 
 def convert_consistency_to_dataframe(consistency: Dict) -> DataFrame:
     """
-    Converts the consistency analysis into a Pandas `DataFrame` so that it can be saved into a file 
-    afterwards.
+    Converts the consistency analysis into a Pandas `DataFrame` for saving to a file later.
+
+    This method is deprecated as the consistency analysis is not used in the study.
 
     Args:
-        - consistency: The dictionnary with the consistency analysis
+        - consistency: The dictionary with the consistency analysis
 
     Returns: the converted DataFrame.
     """

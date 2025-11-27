@@ -1,5 +1,5 @@
 """
-This module provides automated tests for the `Confidence` module.
+This module offers automated tests for the `Confidence` module.
 """
 
 from unittest import TestCase
@@ -25,7 +25,7 @@ CODES = ['cei_pc020', 'cei_pc030', 'cei_pc034', 'sdg_01_10', 'sdg_06_40', 'sdg_0
 
 class TestConfidence(TestCase):
     """
-    This class provides automated tests for the module's methods.
+    This class offers automated tests for the module's methods.
     """
 
     bootstraped_pcas: NDArray
@@ -57,7 +57,7 @@ class TestConfidence(TestCase):
     @patch('confidence.generate_bootstraped_dataset')
     def test_bootstrap_and_apply_pca(self, generate_bootstraped_dataset_mock: Mock):
         """
-        Tests the method `bootstrap_and_apply_pca` under the normal scenario.
+        Tests the method `bootstrap_and_apply_pca` under the typical scenario.
         """
 
         # Arrange
@@ -102,7 +102,7 @@ class TestConfidence(TestCase):
 
     def test_generate_bootstraped_pcas_on_indicators(self):
         """
-        Tests the method `generate_bootstraped_pcas_on_indicators` under the normal scenario.
+        Tests the method `generate_bootstraped_pcas_on_indicators` under the typical scenario.
         """
 
         # Arrange
@@ -120,7 +120,7 @@ class TestConfidence(TestCase):
 
     def test_jacknife_and_apply_pca(self):
         """
-        Tests the method `jacknifed_and_apply_pca` under the normal scenario.
+        Tests the method `jacknifed_and_apply_pca` under the typical scenario.
         """
 
         # Act
@@ -132,7 +132,7 @@ class TestConfidence(TestCase):
 
     def test_confidence_intervals_from_indexes(self):
         """
-        Tests the method `confidence_intervals_from_indexes` under the normal scenario.
+        Tests the method `confidence_intervals_from_indexes` under the typical scenario.
         """
 
         # Arrange
@@ -153,7 +153,7 @@ class TestConfidence(TestCase):
 
     def test_produce_confidence_intervals(self):
         """
-        Tests the method `produce_confidence_intervals` under the normal scenario.
+        Tests the method `produce_confidence_intervals` under the typical scenario.
         """
 
         # Act
@@ -170,7 +170,7 @@ class TestConfidence(TestCase):
 
     def test_bootstraped_indicators_to_dataframe(self):
         """
-        Tests the method `bootstraped_indicators_to_dataframe` under the normal scenario.
+        Tests the method `bootstraped_indicators_to_dataframe` under the typical scenario.
         """
         # Arrange
         _, empiric_eigen_vectors, _ = apply_pca(DATA)
@@ -194,7 +194,7 @@ class TestConfidence(TestCase):
 
     def test_jacknifed_indicators_to_dataframe(self):
         """
-        Tests the method `jacknifed_indicators_to_dataframe` under the normal scenario.
+        Tests the method `jacknifed_indicators_to_dataframe` under the typical scenario.
         """
         # Arrange
         jacknifed = jacknife(DATA)
@@ -217,7 +217,7 @@ class TestConfidence(TestCase):
 
     def test_confidence_interval_to_dataframe(self):
         """
-        Tests the method `confidence_interval_to_dataframe` under the normal scenario.
+        Tests the method `confidence_interval_to_dataframe` under the typical scenario.
         """
 
         # act

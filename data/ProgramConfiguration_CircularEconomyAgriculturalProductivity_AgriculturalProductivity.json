@@ -1,0 +1,77 @@
+[
+  {
+    "id": "ESA",
+    "code": "aact_eaa01",
+    "Agricultural indicator": "Production value at basic price",
+    "List of products - EAA": "Output of the agricultural 'industry'",
+    "Unit of measure": "Million euro",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  },
+  {
+    "id": "PEA",
+    "code": "nama_10_a64_e",
+    "National accounts indicator (ESA 2010)": "Total employment domestic concept",
+    "Statistical classification of economic activities in the European Community (NACE Rev. 2)": "Crop and animal production, hunting and related service activities",
+    "Unit of measure": "Thousand persons",
+    "economic": 2,
+    "social": 2,
+    "environmental": 0
+  },
+  {
+    "id": "VAA",
+    "code": "aact_eaa01",
+    "Agricultural indicator": "Production value at basic price",
+    "List of products - EAA": "Gross value added at basic prices",
+    "Unit of measure": "Million euro",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  },
+  {
+    "id": "NVL",
+    "code": "apro_mt_lscatl",
+    "Live animals": "Dairy cows",
+    "Month": "December",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  },
+  {
+    "id": "NAB",
+    "code": "apro_mt_lscatl",
+    "Live animals": "Live bovine animals",
+    "Month": "December",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  },
+  {
+    "id": "NDC",
+    "code": "apro_mt_lspig",
+    "Live animals": "Live swine, domestic species",
+    "Month": "December",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  },
+  {
+    "id": "BEE",
+    "code": "apro_cpnh1",
+    "Crops": "Wheat and spelt",
+    "Structure of production": "Area (cultivation/harvested/production) (1000 ha)",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  },
+  {
+    "id": "ORG",
+    "code": "apro_cpnh1",
+    "Crops": "Barley",
+    "Structure of production": "Area (cultivation/harvested/production) (1000 ha)",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  }
+]

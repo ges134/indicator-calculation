@@ -1,10 +1,10 @@
 """
-The monitor module contains a subprogram to monitor data changes throughout the study of the
-indicators.
+The monitor module contains a subprogram to monitor changes in indicator data throughout the study.
 
-This will merge collected datasets and compare them to a reference dataset. The reference dataset
-should be supplied. The difference is saved into a CSV file. If the file is empty, it means that no
-data differences were noted. The remainder of the work can be set up in a spreadsheet software.
+This subprogram will merge collected datasets and compare them to a reference dataset. The reference
+dataset should be supplied. The difference is saved into a CSV file. If the file is empty, it means
+that no data differences were noted. The remainder of the work can be set up in a spreadsheet
+software.
 """
 
 from pandas import read_csv

@@ -1,10 +1,7 @@
 """
-The scripts run the linting in all the files of the proof-of-concept program.
+The scripts run linting on all the program's files.
 
-The script fails if the score obtained by pylint is lower than
-a defined thereshold.
-
-For each step, specific disabled rules has been added.
+The script fails if the pylint score is below a defined threshold.
 """
 
 import sys

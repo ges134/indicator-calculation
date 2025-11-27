@@ -1,5 +1,5 @@
 """
-This module provides automated tests for the `Subjective` module.
+This module offers automated tests for the `Subjective` module.
 """
 
 from unittest import TestCase
@@ -66,12 +66,12 @@ CONFIG = [
 
 class TestSubjective(TestCase):
     """
-    This class provides automated tests for the module's methods.
+    This class offers automated tests for the module's methods.
     """
 
     def test_get_scores_for_indicators(self):
         """
-        Tests the method `get_scores_for_indicators` under the normal scenario.
+        Tests the method `get_scores_for_indicators` under the typical scenario.
         """
 
         # Arrange
@@ -116,7 +116,7 @@ class TestSubjective(TestCase):
 
     def test_get_comparison_matrices(self):
         """
-        Tests the method `get_comparison_matrices` under the normal scenario.
+        Tests the method `get_comparison_matrices` under the typical scenario.
         """
 
         # Arrange
@@ -161,7 +161,7 @@ class TestSubjective(TestCase):
 
     def test_get_subjective_weights(self):
         """
-        Tests the method `get_subjective_weights` under the normal scenario.
+        Tests the method `get_subjective_weights` under the typical scenario.
         """
 
         # Arrange
@@ -285,7 +285,7 @@ class TestSubjective(TestCase):
 
     def test_convert_scores_to_dataframe(self):
         """
-        Tests the method `convert_scores_to_dataframe` under the normal scenario.
+        Tests the method `convert_scores_to_dataframe` under the typical scenario.
         """
 
         # Arrange
@@ -303,7 +303,7 @@ class TestSubjective(TestCase):
 
     def test_convert_weihts_to_datafgrame(self):
         """
-        Tests the method `get_convert_weihts_to_datafgrame` under the normal scenario.
+        Tests the method `get_convert_weihts_to_datafgrame` under the typical scenario.
         """
         # Arrange
         scores = get_scores_for_indicators(CONFIG)
@@ -324,7 +324,7 @@ class TestSubjective(TestCase):
 
     def test_convert_consistency_to_dataframe(self):
         """
-        Tests the method `convert_consistency_to_dataframe` under the normal scenario.
+        Tests the method `convert_consistency_to_dataframe` under the typical scenario.
         """
 
         # Arrange
@@ -345,7 +345,7 @@ class TestSubjective(TestCase):
 
     def test_get_random_index(self):
         """
-        Tests the method `test_get_random_index` under the normal scenario.
+        Tests the method `test_get_random_index` under the typical scenario.
         """
 
         # Arrange

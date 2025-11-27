@@ -1,5 +1,5 @@
 """
-This module provides automated tests for the `Stats` module.
+This module offers automated tests for the `Stats` module.
 """
 
 from unittest import TestCase
@@ -17,12 +17,12 @@ from tests.constants import DATA
 
 class TestStats(TestCase):
     """
-    This class provides automated tests for the module's methods.
+    This class offers automated tests for the module's methods.
     """
 
     def test_generate_bootstraped_dataset(self):
         """
-        Tests the method `generate_bootstraped_dataset` under the normal scenario.
+        Tests the method `generate_bootstraped_dataset` under the typical scenario.
         """
 
         # Act
@@ -35,7 +35,7 @@ class TestStats(TestCase):
 
     def test_jacknife(self):
         """
-        Tests the method `jacknife` under the normal scenario
+        Tests the method `jacknife` under the typical scenario
         """
 
         # Act
@@ -79,7 +79,7 @@ class TestStats(TestCase):
 
     def test_correlation_matrix_between_pcas(self):
         """
-        Tests the `correlation_matrix_between_pcas` under the normal scenario.
+        Tests the `correlation_matrix_between_pcas` under the typical scenario.
         """
 
         # Arrange
@@ -116,7 +116,7 @@ class TestStats(TestCase):
 
     def test_test_for_normality(self):
         """
-        Tests the `test_for_normality` under the normal scenario.
+        Tests the `test_for_normality` under the typical scenario.
         """
 
         # Arrange
@@ -135,7 +135,7 @@ class TestStats(TestCase):
 
     def test_boxcox_transform(self):
         """
-        Tests the `boxcox_transform` under the normal scenario.
+        Tests the `boxcox_transform` under the typical scenario.
         """
 
         # Arrange

@@ -1,5 +1,5 @@
 """
-This module provides automated tests for the `Merger` module.
+This module offers automated tests for the `Merger` module.
 """
 
 from unittest import TestCase
@@ -49,7 +49,7 @@ CONFIG = [
 
 class MergerTests(TestCase):
     """
-    This class provides automated tests for the module's methods.
+    This class offers automated tests for the module's methods.
     """
 
     dataframes: List[DataFrame]
@@ -355,7 +355,7 @@ class MergerTests(TestCase):
     @patch('merger.load_dataset')
     def test_get_observations_with_complete_years(self, load_dataset_mock: Mock):
         """
-        Tests the method `get_observations_with_complete_years` under the normal scenario
+        Tests the method `get_observations_with_complete_years` under the typical scenario
         """
 
         # Arrange
@@ -384,7 +384,7 @@ class MergerTests(TestCase):
     @patch('merger.load_dataset')
     def test_get_years_to_compute(self, load_dataset_mock: Mock):
         """
-        Tests the method `get_observations_with_complete_years` under the normal scenario
+        Tests the method `get_observations_with_complete_years` under the typical scenario
         """
 
         # Arrange

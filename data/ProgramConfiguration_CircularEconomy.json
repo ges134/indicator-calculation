@@ -1,0 +1,88 @@
+[
+  {
+    "id": "EMA",
+    "code": "cei_pc020",
+    "economic": 0,
+    "social": 0,
+    "environmental": 3
+  },
+  {
+    "id": "PDR",
+    "code": "cei_pc030",
+    "Unit of measure": "Euro per kilogram, chain linked volumes (2015)",
+    "economic": 2,
+    "social": 0,
+    "environmental": 2
+  },
+  {
+    "id": "GMR",
+    "code": "cei_pc034",
+    "economic": 0,
+    "social": 2,
+    "environmental": 2
+  },
+  {
+    "id": "TRM",
+    "code": "cei_wm011",
+    "economic": 1,
+    "social": 0,
+    "environmental": 3
+  },
+  {
+    "id": "ECO",
+    "code": "cei_gsr010",
+    "Consumption footprint": "Single weighted score",
+    "Unit of measure": "Per inhabitant",
+    "economic": 0,
+    "social": 0,
+    "environmental": 3
+  },
+  {
+    "id": "TUC",
+    "code": "cei_srm030",
+    "economic": 2,
+    "social": 0,
+    "environmental": 2
+  },
+  {
+    "id": "EMR",
+    "code": "cei_srm020",
+    "Raw materials": "Total",
+    "Stock or flow": "Imports extra-EU27 (from 2020)",
+    "Unit of measure": "Tonne",
+    "economic": 2,
+    "social": 0,
+    "environmental": 2
+  },
+  {
+    "id": "IVA",
+    "code": "cei_cie012",
+    "Environment indicator": "Investment",
+    "Unit of measure": "Million euro",
+    "economic": 3,
+    "social": 1,
+    "environmental": 0
+  },
+  {
+    "id": "PEE",
+    "code": "cei_cie011",
+    "Unit of measure": "Full-time equivalent (FTE)",
+    "economic": 3,
+    "social": 1,
+    "environmental": 0
+  },
+  {
+    "id": "GSP",
+    "code": "cei_gsr011",
+    "economic": 0,
+    "social": 0,
+    "environmental": 3
+  },
+  {
+    "id": "DIM",
+    "code": "cei_gsr030",
+    "economic": 3,
+    "social": 0,
+    "environmental": 0
+  }
+]

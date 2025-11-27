@@ -1,5 +1,5 @@
 """
-This module provides automated tests for the `Independance` module.
+This module offers automated tests for the `Independance` module.
 """
 
 from unittest import TestCase
@@ -41,7 +41,7 @@ CONFIG = [
 
 class TestIndependance(TestCase):
     """
-    This class provides automated tests for the module's methods.
+    This class offers automated tests for the module's methods.
     """
 
     dataframes: List[DataFrame]
@@ -57,7 +57,7 @@ class TestIndependance(TestCase):
     @patch('merger.load_dataset')
     def test_prepare_dataframe_for_pca(self, load_dataset_mock: Mock):
         """
-        Tests the method `prepare_dataframe_for_pca` under the normal scenario.
+        Tests the method `prepare_dataframe_for_pca` under the typical scenario.
         """
 
         load_dataset_mock.side_effect = self.dataframes

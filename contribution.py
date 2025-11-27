@@ -1,5 +1,9 @@
 """
-This modules generated a contribution plot based on the PCA results.
+This module generates contribution graphs from PCA results.
+
+This module is considered deprecated since the notebooks now generate the contributions graph,
+which is then used in the paper. The code may still be invoked to obtain a variant in which the
+indicator identifiers are present in the contribution graph.
 """
 
 from numpy.typing import NDArray
@@ -9,12 +13,12 @@ from tqdm import tqdm
 
 def make_loading_plot(eigen_vectors: NDArray, codes: List[str], file_name: str):
     """
-    Generates the loading plot based on a PCA and saves it.
+    Generates the contribution diagram based on a PCA and saves it.
 
     The PCA should be done beforehand with the method `stats.apply_pca`. 
 
     Args:
-        - eigen_vectors: The eigen vectors of the resulting PCA. Only the firt two PCs are
+        - eigen_vectors: The eigen vectors of the resulting PCA. Only the first two PCs are
             considered for the loading graph.
         - codes: The identifiers of the indicators associated to this PCA.
         - file_name: The relative path of the saved file of the loading plot, relative to the root
@@ -45,17 +49,17 @@ def make_loading_plot_with_confidence_intervals(
     upper_confidence_intervals: NDArray
 ):
     """
-    Generates the loading plot based on a PCA with the confidence intervals genarated from the 
+    Generates a contribution diagram based on a PCA, with confidence intervals computed using the
     Bootstrap method. The resulting graph is then saved.
 
-    The PCA should be done beforehand with the method `stats.apply_pca`. The bootstraped dataset
-    should be generated with `confidence.bootstrap_and_apply_pca`,
-    `confidence.jacknife_and_apply_pca` and `confidence.produce_confidence_intervals`.
+    The PCA should be performed beforehand using the `stats.apply_pca` method. The bootstraped
+    dataset should be generated using `confidence.bootstrap_and_apply_pca`,
+    `confidence.jacknife_and_apply_pca`, and `confidence.produce_confidence_intervals`.
 
     Args:
-        - eigen_vectors: The eigen vectors of the resulting PCA. Only the firt two PCs are
+        - eigen_vectors: The eigen vectors of the resulting PCA. Only the first two PCs are
             considered for the loading graph.
-        - codes: The identifiers of the indicators associated to this PCA.
+        - codes: The identifiers of the indicators associated with this PCA.
         - file_name: The relative path of the saved file of the loading plot, relative to the root
             of the project.
         - lower_confidence_interval: The lower bounds of the confidence intervals.

@@ -1,6 +1,6 @@
 """
-This modules computes the confidence intervals with the Bootstrap method. It consists on realizing
-multiple bootstraped PCAs to compute the confidence intervals. The method is adapted fromn this
+This module computes the confidence intervals with the Bootstrap method. It consists of realizing
+multiple bootstraped PCAs to compute the confidence intervals. The method is adapted from this
 reference:
 
 Babamoradi, H., van den Berg, F., & Rinnan, Å. (2013). Bootstrap based confidence limits in
@@ -37,21 +37,20 @@ def generate_bootstraped_pcas_on_indicators(
     empiric_eigen_vectors: NDArray
 ) -> Tuple[List[NDArray], List[NDArray]]:
     """
-    Generates a numper of bootstrap samples and their associated PCAs to perform the computation of
-    confidence intervals.
+    Generates several Bootstrap samples and their associated PCAs to compute confidence intervals.
 
     Args:
         - indicators: The indicators to bootstrap.
         - empiric_eigen_vectors: The eigen vectors of the PCA applied to the `indicators` parameter.
             In the program, this is done beforehand.
 
-    Returns: A tuple with two three dimensionnal array. The first element of the tuple returns the
-        bootstrap samples. In this array, the first index represents the number of the bootstrap
-        sample. The second index represents the row (observation) and the third index returns the
-        value of an indicator. The second element of the tuple returns the associated PCAs for the
-        bootstraped dataset. In this array, the first index represents the number of the bootstrap
-        sample. The second index represents the indicator and the third index represents the
-        eigen vectors components for each principal component.
+    Returns: A tuple with two three-dimensional arrays. The first element of the tuple returns the
+        bootstrap samples. In this array, the first index corresponds to the bootstrap sample
+        number. The second index corresponds to the row (observation), and the third index returns
+        the value of an indicator. The second element of the tuple returns the associated PCAs for
+        the bootstraped dataset. In this array, the first index corresponds to the bootstrap sample
+        number. The second index represents the indicator, and the third index represents the
+        eigenvalue components for each principal component.
     """
     bootstraped_pcas = []
     bootstraped_data = []
@@ -76,25 +75,25 @@ def bootstrap_and_apply_pca(
 ) -> Tuple[NDArray, NDArray]:
     """
     Draws a bootstrap sample and applies a PCA on this sample with axis reordering and reversal.
-    This method ensures that the first principal component of the bootstraped PCA is the equivalent
-    of the first principal component of the empirical dataset and so on.
+    This method ensures that the first principal component of the bootstraped PCA is equivalent to
+    the first principal component of the empirical dataset, and so on.
 
-    The axis reordering is done by looking at the correlation matrix between the two PCAs. The
-    strongest absolute correlation represents the association between the bootstraped PCA and the
-    empirical PCA. This is only true if all the mappings are distinct. If not, the sample is
-    redrawn until the condition is true.
+    The axis reordering is based on the correlation matrix between the two PCAs. The strongest
+    absolute correlation represents the association between the bootstraped PCA and the empirical
+    PCA. This statement is only valid if all the mappings are distinct. If not, the sample is
+    redrawn until the condition is proper.
 
-    The axis reflexion is done by looking at the correlation matrix after the axis reordering. If
-    the sign of the correlation is negative, then the axis is multiplied by `-1`.
+    The axis reflection is performed by examining the correlation matrix after the axis reordering.
+    If the sign of the correlation is negative, then the axis is multiplied by `-1`.
 
     Args:
         - indicators: The indicators to bootstrap.
         - empiric_eigen_vectors: The eigen vectors of the PCA applied to the `indicators` parameter.
             In the program, this is done beforehand.
 
-    Rerturns: A tuple with two matrices. The first matrix is the bootstraped sample and in the
-        second is the eigen vectors of the PCA associated to this bootstraped example with axis
-        reflection and reordering.
+    Returns: A tuple with two matrices. The first matrix is the Bootstrap sample, and the second is
+        the PCA eigenvectors associated with this Bootstrap sample, with axis reflection and
+        reordering.
     """
     can_reorder = False
     final_bootstraped_eigen_vectors = []
@@ -131,21 +130,21 @@ def bootstrap_and_apply_pca(
 
 def jacknife_and_apply_pca(indicators: NDArray) -> Tuple[List[NDArray], List[NDArray]]:
     """
-    Jacknifes the data and then, for each jacknifed sample, applies the PCA.
+    Jackknifes the data and then, for each jackknifed sample, applies the PCA.
 
     See `stats.jacknife` to understand the jacknifing procedure and `stats.apply_pca` to understand
     the PCA.
 
     Args:
-        - indicators: The indicators to jacknife.
+        - indicators: The indicators to jackknife.
 
-    Returns: A tuple with two three dimensionnal array. The first element of the tuple returns the
-        jacknifed samples. In this array, the first index represents the number of the row with a
-        removed element. The second index represents the row (observation) and the third index 
-        returns the value of an indicator. The second element of the tuple returns the associated 
-        PCAs for the jacknifed dataset. In this array, the first index represents the number of the
-        jacknifed sample. The second index represents the indicator and the third index represents
-        the eigen vectors components for each principal component.
+    Returns: A tuple with two three-dimensional arrays. The first element of the tuple returns the
+        jacknifed samples. In this array, the first index corresponds to the row number of the
+        removed element. The second index represents the row (observation), and the third index
+        returns the value of an indicator. The second element of the tuple returns the associated
+        PCAs for the jackknifed dataset. In this array, the first index corresponds to the
+        jackknifed sample number. The second index represents the indicator, and the third index
+        represents the components of the eigenvectors for each principal component.
     """
 
     jacknifed_data = jacknife(indicators)
@@ -160,13 +159,13 @@ def confidence_intervals_from_indexes(indexes: NDArray, bootstraped_pcas: NDArra
     """
     Gives the set of bounds from the given index.
 
-    This method allows to convert the index into part of the confidence interval. It must be called
-    twice, once with the indexes of the lower bounds and another with the sets of the upper bounds.
-    The bounds are located in the bootstraped estimations, which are sorted during the execution of
-    the method.
+    This method allows the index to be converted into a part of the confidence interval. It must be
+    called twice, once with the indices of the lower bounds and again with the indices of the upper
+    bounds. The bounds are located in the bootstraped estimations, which are sorted during the
+    execution of the method.
 
     Args:
-        - indexes: The set of indexes associated to the bounds.
+        - indexes: The set of indexes associated with the bounds.
         - bootstraped_pcas: The bootstrap estimations. The actual bounds will be returned from this
             parameter.
 
@@ -189,11 +188,12 @@ def produce_confidence_intervals(
     significant_level: float
 ) -> Tuple[NDArray, NDArray]:
     """
-    Makes the confidence intervals of the eigen vectors based on the significant level.
+    Computes the confidence intervals for the eigen vectors based on the specified significance
+    level.
 
-    This methods requires that the bootstraped dataset and the jacknifed dataset has ben generated
-    beforehand. Hence, the methods `bootstrap_and_apply_pca` and `jacknife_and_apply_pca` should
-    have been called beforehand. Furthermore, the empiric eigen vectors are also required and can be
+    This method requires that the bootstrap and jackknife datasets have been generated beforehand.
+    Hence, the methods' bootstrap_and_apply_pca` and `jacknife_and_apply_pca` should have been
+    called beforehand. Furthermore, the empirical eigenvectors are also required and can be
     generated using `stats.apply_pca`.
 
     Args:
@@ -202,11 +202,11 @@ def produce_confidence_intervals(
         - jacknifed_pcas: The PCAs of the jacknifed dataset.
         - empiric_eigen_vector: The eigen vectors of the PCA applied to the data in which the
             bootstraped dataset was generated.
-        - sigificant_level: A value, between 0 and 1 for the significant level. Recommended values
+        - significant_level: A value between 0 and 1 for the significant level. Recommended values
             are 0.05 and 0.01.
 
-    Returns: A tuple containing the bounds of the confidence interavals. The first element of the
-        tuple returns the lower bounds while the second returns the upper bounds.    
+    Returns: A tuple containing the bounds of the confidence intervals. The first element of the
+        tuple returns the lower bounds, while the second returns the upper bounds.   
     """
 
     standard_normal_distribution = Normal(mu=0, sigma=1)
@@ -267,12 +267,12 @@ def bootstraped_indicators_to_dataframe(
     codes: List[str]
 ) -> DataFrame:
     """
-    Converts the bootstraped indicators into a dataframe to be later saved into a CSV file.
+    Converts the bootstraped indicators into a dataframe for later saving as a CSV file.
     
     Args:
         - bootstraped_indicators: The bootstraped indicators generated by
-            `generate_bootstraped_pcas_on_indicators`. The three dimensional array will be flattened
-            to a two dimension array.
+            `generate_bootstraped_pcas_on_indicators`. The three-dimensional array will be
+            flattened into a two-dimensional array.
         - codes: The list of indicator identifiers to show in the header of the dataframe.
 
     Return: The converted dataframe.
@@ -287,11 +287,11 @@ def jacknifed_indicators_to_dataframe(
     codes: List[str]
 ) -> DataFrame:
     """
-    Converts the jacknifed indicators into a dataframe to be later saved into a CSV file.
+    Converts the jacknifed indicators into a dataframe for later saving as a CSV file.
     
     Args:
         - jacknifed_indicators: The jacknifed indicators generated by `jacknife`.
-            The three dimensional array will be flattened to a two dimension array.
+            The three-dimensional array will be flattened to a two-dimensional array.
         - codes: The list of indicator identifiers to show in the header of the dataframe.
 
     Return: The converted dataframe.
@@ -307,7 +307,7 @@ def confidence_interval_to_dataframe(
     codes: List[str]
 ) -> DataFrame:
     """
-    Converts the confidence intervals into a dataframe to be later saved into a CSV file.
+    Converts the confidence intervals into a dataframe for later saving as a CSV file.
 
     Args:
         - lower_confidence_interval: The lower bounds of the confidence intervals.
@@ -330,13 +330,13 @@ def confidence_interval_to_dataframe(
 def flatten(data: List[NDArray]) -> NDArray:
     """
     Flattens a three-dimensional array into a two-dimensional array. The index of the third
-        dimension is added as a row to the two dimension array.
+    dimension is added as a column to the two-dimensional array.
 
     Args:
-        - data: The data to convert in a two-dimensional array.
+        - data: The data to convert into a two-dimensional array.
 
-    Return: The flattened array. The first column of this array correspond to the index of the third
-        dimension.
+    Return: The flattened array. The first column of this array corresponds to the index of the
+        third dimension.
     """
     flattened: NDArray = None
     for i, sample in tqdm(enumerate(data), "Flattening data.", leave=False):

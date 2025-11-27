@@ -1,10 +1,10 @@
 """
-The years module contains a subprogram to realize a sensitivity based on the observations years for
-the PCA. It computes only the necessary data to perform the sensitivity analysis.
+The years module contains a subprogram to compute sensitivity based on the observed years for the
+PCA. It computes only the necessary data to perform the sensitivity analysis.
 
-This program merges the collected dataset and filters any year to which at least one country has one
+This program merges the collected dataset and filters any year in which at least one country has a
 null observation for one indicator. Then, it takes three years among the complete variables, the
-first, the middle and the last, and it computes the PCA and the degree of independances. Those are
+first, the middle and the last, and it computes the PCA and the degree of independence. Those are
 saved into a CSV file.
 """
 

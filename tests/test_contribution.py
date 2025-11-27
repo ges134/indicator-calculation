@@ -1,5 +1,5 @@
 """
-This module provides automated tests for the `Contribution` module.
+This module offers automated tests for the `Contribution` module.
 """
 
 from unittest import TestCase
@@ -13,12 +13,12 @@ CODES = ['EMA', 'PDR', 'GMR', 'TRP', 'NDE', 'PMS']
 
 class TestContribution(TestCase):
     """
-    This class provides automated tests for the module's methods.
+    This class offers automated tests for the module's methods.
     """
 
     def test_make_loading_plot(self):
         """
-        Tests the method `make_loading_plot` under the normal scenario.
+        Tests the method `make_loading_plot` under the typical scenario.
         """
 
         # Arrange
@@ -37,7 +37,7 @@ class TestContribution(TestCase):
 
     def test_make_loading_plot_with_confidence_intervals(self):
         """
-        Tests the method `make_loading_plot_with_confidence_intervals` under the normal scenario.
+        Tests the method `make_loading_plot_with_confidence_intervals` under the typical scenario.
         """
 
         # Act
