@@ -1,0 +1,72 @@
+[
+  {
+    "id": "TSP",
+    "code": "ilc_lvho05a",
+    "Age class": "Total",
+    "Income situation in relation to the risk of poverty threshold": "Total",
+    "Sex": "Total",
+    "economic": 0,
+    "social": 3,
+    "environmental": 0
+  },
+  {
+    "id": "PMB",
+    "code": "sdg_11_20",
+    "Income situation in relation to the risk of poverty threshold": "Total",
+    "economic": 0,
+    "social": 3,
+    "environmental": 0
+  },
+  {
+    "id": "PAR",
+    "code": "tran_sf_roadus",
+    "Age class": "Total",
+    "Category of persons": "Total",
+    "Sex": "Total",
+    "Unit of measure": "Per million inhabitants",
+    "economic": 0,
+    "social": 3,
+    "environmental": 0
+  },
+  {
+    "id": "TRM",
+    "code": "cei_wm011",
+    "economic": 1,
+    "social": 0,
+    "environmental": 3
+  },
+  {
+    "id": "PLH",
+    "code": "ilc_mdho01",
+    "Age class": "Total",
+    "Income situation in relation to the risk of poverty threshold": "Total",
+    "Sex": "Total",
+    "Type of household": "Total",
+    "economic": 0,
+    "social": 3,
+    "environmental": 0
+  },
+  {
+    "id": "PCE",
+    "code": "sdg_06_20",
+    "economic": 0,
+    "social": 1,
+    "environmental": 3
+  },
+  {
+    "id": "PTC",
+    "code": "sdg_09_50",
+    "Vehicles": "Trains, motor coaches, buses and trolley buses - sum of available data",
+    "economic": 1,
+    "social": 1,
+    "environmental": 3
+  },
+  {
+    "id": "PRC",
+    "code": "sdg_16_20",
+    "Income situation in relation to the risk of poverty threshold": "Total",
+    "economic": 0,
+    "social": 3,
+    "environmental": 0
+  }
+]

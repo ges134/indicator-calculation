@@ -1,5 +1,5 @@
 """
-This module ensures that all the indicators' datasets are merged into one.
+This module ensures that all indicator datasets are merged into a single dataset.
 """
 
 from typing import List, Dict
@@ -11,29 +11,27 @@ from data import load_dataset
 
 def merge_datasets(config: List[Dict]) -> Dict:
     """
-    This function applies the dataset merging from the `codes` provided in the parameter. This is
-    the central function of merging.
+    This function applies the dataset merging with the specified configuration.
 
     Each dataset is computed entirely before moving on to the next one. The computation does the
-    following elements:
+    following:
     
     1. Load the dataset and convert it into a `DataFrame`
-    2. Check if the dataset is of appropriate format. If not, the computing stops there for this
+    2. Check if the dataset is of the appropriate format. If not, the computing stops there for this
     dataset.
-    3. With the appropriate format, it scans each row and updates the merged dataset. New keys are
-    created if they don't exists.
+    3. ith the appropriate format, it scans each row and updates the merged dataset. New keys are
+    created if they do not exist.
 
     Args:
-        config: The configuration file for this program execution. It should provide an identifier,
-            an Eurostat data code and the necessary specifications to read multiple dimensions. For
-            instance, if there is multiple units of measure for one dataset, the configuration 
-            should specify which unit to choose.
+        - config: The configuration file for this program execution. It should provide an
+            identifier, an Eurostat data code and the necessary specifications to read multiple
+            dimensions. For instance, if there are multiple units of measure for a dataset, the
+            configuration should specify which unit to use.
     
-    Returns:
-        A dictionnary with the merged datasets. In this dictionnary, each entry has a key with the
-        country and the year of reporting, separated by a semi-colomn (;). Inside, another
-        dictionnary with the values is stored. The values can be accessed with the `value` key. In 
-        this dictionnary, the indicator code is the key and the indicator value is in the value.
+    Returns: A dictionary with the merged datasets. In this dictionary, each entry has a key with
+        the country and the year of reporting, separated by a semicolon (;). Inside, another
+        dictionary with the values is stored. The values can be accessed with the `value` key. In
+        this dictionary, the indicator code is the key, and the indicator value is in the value.
     """
 
     merged = {}
@@ -68,15 +66,14 @@ def merge_datasets(config: List[Dict]) -> Dict:
 
 def dataset_can_be_merged(dataframe: DataFrame) -> bool:
     """
-    This function checks if the data frame given in the `dataframe` parameter 
-    can be merged. A data frame can be merged if there is a annual time frequency
-    and if the geopolitical entity and time columns are on the dataset.
+    This function checks whether the data frame provided in the `dataframe` parameter can be merged.
+    A data frame can be merged if the time frequency is annual and the dataset includes the
+    geopolitical entity and time columns.
 
     Args:
-        dataframe: The dataframe to test.
+        - dataframe: The dataframe to test.
     
-    Returns:
-        True if the dataset can be merged. False otherwise.
+    Returns: True if the dataset can be merged. False otherwise.
     """
     if (
         'Time frequency' not in dataframe.columns
@@ -97,11 +94,10 @@ def convert_dataset_to_dataframe(merged: Dict, config: List[Dict]) -> DataFrame:
     The merged dataset can be generated with the `merge_datasets` method of this module.
 
     Args:
-        merged: The dictionnary containing the merged dataset.
-        config: The configuration file of this program execution.
+        - merged: The dictionary containing the merged dataset.
+        - config: The configuration file of this program execution.
 
-    Returns:
-        A dataframe of the merged datasets. This list can be saved into a file with the
+    Returns: A dataframe of the merged datasets. This list can be saved in a file with the
         `data.save_csv` method.
     """
 
@@ -129,14 +125,13 @@ def convert_dataset_to_dataframe(merged: Dict, config: List[Dict]) -> DataFrame:
 
 def monitor_dataset(reference: DataFrame, merged: DataFrame) -> DataFrame:
     """
-    Creates a dataframe that tracks changes between two executions of programs.
+    Creates a dataframe that tracks changes between two program executions.
 
-    The dataframe is managed by Pandas. Essentially, this shows a minimal dataframe with the changes
-    in the columns and with the index number.
+    Pandas manages this dataframe. This minimal dataframe shows column and value changes.
 
     Args:
-        - reference: The reference data frame, corresponding to when the first data extraction was
-        executed.
+        - reference: The reference dataframe, corresponding to when the first data extraction was
+            executed.
         - merged: The data frame of this current program execution.
     
     Returns: The compared data frame from Pandas.
@@ -146,14 +141,14 @@ def monitor_dataset(reference: DataFrame, merged: DataFrame) -> DataFrame:
 
 def get_observations_with_complete_years(merged_dataframe: DataFrame) -> DataFrame:
     """
-    Filters a dataframe to which all countries must have an observation for a given year. If a
-    country has one null value for this year, all the observations for said years are removed.
+    Filters a dataframe so that all countries have an observation for a given year. If a country has
+    one null value for this year, all the observations for said years are removed.
 
     Args:
         - merged_dataframe: The dataframe for the merged indicators.
     
-    Returns: The dataframe that respects the filter criterion. This means that each year has all the
-        countries with observations on all indicators.
+    Returns: The dataframe that satisfies the filter criterion, where each year includes all
+        countries with observations for all indicators.
     """
 
     complete_observations = merged_dataframe[~merged_dataframe.Country.str.contains('European Union')].dropna()
@@ -168,8 +163,8 @@ def get_observations_with_complete_years(merged_dataframe: DataFrame) -> DataFra
 
 def get_years_to_compute(complete_observations: DataFrame) -> List[float]:
     """
-    For a dataframe with complete observations, gets the years to compute a sensitivity for
-    observations years in the PCA.
+    For a dataframe with complete observations, it gets the years to compute a sensitivity for
+    observation years in the PCA. Three years are used: the first, the middle and the last.
 
     Args:
         - complete_observations: The dataframe to compute the years from. It should have a `Year`

@@ -1,8 +1,7 @@
 """
-This module computes the degree of independances from the indicators. The degrees follow the
-interpretation of principal component analysis. The closer an indicator is to 90 degrees in regards
-to the eigen vector of the first two principal components, the more independant it is. This module
-allows also the computation of the PCA.
+This module computes the degree of independence from the indicators. The degrees follow the
+interpretation of principal component analysis. The closer an indicator is to 90 degrees from the
+eigen vector of the first two principal components, the more independent it is.
 """
 
 from numpy import array, rad2deg, acos, dot
@@ -14,7 +13,7 @@ from pandas import DataFrame
 
 def prepare_dataframe_for_pca(indicators: DataFrame) -> NDArray:
     """
-    Converts the dataframe of the merged indicators into a `numpy` array for PCA.
+    Converts the merged indicators dataframe into a `numpy` array for PCA.
 
     The values are averaged. Any row with at least one column with a `nan` is dropped from the
     analysis at this stage.
@@ -22,8 +21,8 @@ def prepare_dataframe_for_pca(indicators: DataFrame) -> NDArray:
     Args:
         - indicators: The merged dataset of the indicators.
 
-    Returns: The indicators without any european agregate to which all rows with at least one null
-        value is removed. The remaining rows are aggregated by country with an average of the value.
+    Returns: The indicators without any European aggregate to which all rows with at least one null
+        value are removed. The remaining rows are aggregated by country, with the average value.
         This array is in a `numpy` format.
     """
     filtered_dataframe = indicators[~indicators.Country.str.contains('European')].dropna()
@@ -32,7 +31,7 @@ def prepare_dataframe_for_pca(indicators: DataFrame) -> NDArray:
 
 def get_pca_data_from_years(indicators: DataFrame, year: int) -> NDArray:
     """
-    Converts a dataframe of merged indocators into a `numpy` array of PCA with all the observations
+    Converts a dataframe of merged indicators into a `numpy` array of PCA with all the observations
     of a given year.
 
     Any row with at least one column with a `nan` is dropped from the analysis at this stage.
@@ -41,9 +40,9 @@ def get_pca_data_from_years(indicators: DataFrame, year: int) -> NDArray:
         - indicators: The merged dataset of the indicators.
         - year: The year to retrieve the indicators from.
 
-    Returns: The indicators without any european agregate to which all rows with at least one null
-        value is removed. The remaining rows represents one year given by the `year` argument. This
-        array is in a `numpy` format.
+    Returns: The indicators without any European aggregate to which all rows with at least one null
+        value are removed. The remaining rows represent one year, as specified by the `year`
+        argument. This array is in a `numpy` format.
     """
 
     filtered_dataframe = indicators[~indicators.Country.str.contains('European')].dropna()
@@ -52,18 +51,17 @@ def get_pca_data_from_years(indicators: DataFrame, year: int) -> NDArray:
 
 def get_degrees_of_independance(eigen_vectors: NDArray) -> Tuple[NDArray, NDArray]:
     """
-    Computes the degrees of independances with the results of the PCA. `stats.apply_pca`
+    Computes the degrees of independence with the results of the PCA. `stats.apply_pca`
     should be run beforehand.
 
     Args:
         - eigen_vectors: The eigen vectors from the principal component analysis.
 
-    Returns: The results of the degrees of independance in the form of a tuple. The first element is
-        the array of the angles between each indicator. The second is the arry of the degrees of
-        independance. This degree is valued between 0 and 1. 0 means that two indicators are
-        completely independant while 1 means that two indicators are completely dependant. Both of
-        the matrices are triangular, so `j >= i` to have results. On the other cases, the value
-        `0.0` has no meaning.
+    Returns: The results of the degrees of independence in the form of a tuple. The first element is
+        the array of angles between each indicator. The second is the array of degrees of
+        independence. This degree ranges from 0 to 1. 0 indicates that two indicators are entirely
+        dependent, while 1 indicates that they are entirely independent. Both of the matrices are
+        triangular, so `j >= i` to have results. In the other cases, the value `0.0` has no meaning.
     """
     loading_vectors = eigen_vectors[:,:2]
     angle_matrix = array([[0.0] * len(loading_vectors)] * len(loading_vectors))

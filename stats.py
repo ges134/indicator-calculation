@@ -1,7 +1,7 @@
 """
-This module provides the statistical tools for the computation of indicators correlation. It is
-mainly used to realize principal component analysis. This method performs this analysis along with
-data manipulation to compute confidence intervals.
+This module provides the statistical tools for computing indicator correlations. It is mainly used
+to realize principal component analysis. This method performs the analysis and data manipulation to
+compute confidence intervals.
 """
 
 from numpy import delete, array, mean, std, corrcoef, argmax, sign, newaxis, copy
@@ -13,14 +13,14 @@ from scipy.stats import anderson, boxcox
 
 def generate_bootstraped_dataset(data: NDArray) -> NDArray:
     """
-    Generates one bootstrap sampled from the data provided in the parameters. The generated
+    Generates a single bootstrap sample from the data provided in the parameters. The generated
     bootstrap sample is drawn from the dataset.
 
     Args:
-        - data: The empiric dataset to which bootstraped observations will be drawn from.
+        - data: The empirical dataset from which bootstraped observations will be drawn.
 
-    Returns: A bootstraped dataset to which each observation from the bootstrap dataset can be found
-        in the empiric dataset.
+    Returns: A bootstrapped dataset, where each observation from the bootstrap dataset can be found
+        in the empirical dataset.
     """
 
     rng = default_rng()
@@ -33,15 +33,15 @@ def generate_bootstraped_dataset(data: NDArray) -> NDArray:
 
 def jacknife(data: NDArray) -> List[NDArray]:
     """
-    Applies the jacknife algorithm to the dataset.
+    Applies the jackknife algorithm to the dataset.
 
-    This algorithm consist in creating samples in which one observation is removed.
+ This algorithm consists of creating samples by removing one observation.
 
     Args:
-        - data: The data to jacknife.
+        - data: The data to jackknife.
 
-    Returns: A list of jacknifed sample, the `i`-th entry of the returned array is a jacknife sample
-        to which the `i`-th row was removed from the empirical dataset.
+    Returns: A list of jackknifed samples; the `i`-th entry of the returned array is the jackknifed
+        sample obtained by removing the `i`-th row from the empirical dataset.
     """
     return [delete(data, i, 0) for i in range(len(data))]
 
@@ -49,20 +49,20 @@ def apply_pca(data: NDArray) -> Tuple[NDArray, NDArray, NDArray]:
     """
     Does the PCA on the data given as a parameter.
 
-    This method does, more precisely, a PCA on a correlation matrix wihtout any transformation.
+    This method, more precisely, performs a PCA on a correlation matrix without any transformation.
+
+    Most of the code is taken from the following blog post along with variable changes:
+    https://bagheri365.github.io/blog/Principal-Component-Analysis-from-Scratch/
 
     Args:
-        - data: The dataset to compute the PCA. The data should be complete and have no empty entry.
+        - data: The dataset to compute the PCA. The data should be complete and have no empty
+            entries.
 
     Returns: The results of the PCA, in the form of a tuple. The first value of the tuple gives the
-        eigen values. The second gives the eigen vectors and the last gives the explained variance
-        by each principal component.
+        eigenvalues. The second gives the eigenvectors, and the last gives the explained variance by
+        each principal component.
     """
     copied_data = array(data)
-
-    # From here, most of the code is taken from
-    # https://bagheri365.github.io/blog/Principal-Component-Analysis-from-Scratch/
-    # Variable names are changed.
 
     average = mean(copied_data, axis=0)
     standard_deviation = std(copied_data, axis=0)
@@ -94,18 +94,18 @@ def apply_pca(data: NDArray) -> Tuple[NDArray, NDArray, NDArray]:
 
 def correlation_matrix_between_pcas(eigen_vectors_a: NDArray, eigen_vectors_b: NDArray) -> NDArray:
     """
-    Computes a correlation matrix between the eigen vectors of two differents PCAs. 
+    Computes a correlation matrix between the eigenvectors of two different PCAs.
 
     Args:
         - eigen_vectors_a: The eigen vectors of the first PCA.
         - eigen_vectors_b: The eigen vectors of the second PCA.
 
-    Returns: A matrix in which the elements corresponds to the correlation of the eigen vectors. The
-        rows represents the eigen vectors of the principal component A (`eigen_vectors_a` parameter)
-        while the columns represents the eigen vectors of the principal component B (
-        `eigen_vectors_b` parameter). Hence, the element [0][1] represents the correlation between
-        the eigen vector of the first principal component from the A set and the eigen vector from
-        the second componenent from the B set.
+    Returns: A matrix in which the elements correspond to the correlation of the eigen vectors. The
+        rows represent the eigen vectors of the principal component A (`eigen_vectors_a` parameter)
+        while the columns represent the eigen vectors of the principal component B 
+        (`eigen_vectors_b` parameter). Hence, the element `[0][1]` represents the correlation
+        between the eigenvector of the first principal component from the A set and the eigenvector
+        from the second component from the B set.
     """
 
     _, nb_cols = eigen_vectors_a.shape
@@ -126,9 +126,9 @@ def test_for_normality(data: NDArray) -> List[bool]:
     test.
 
     Args:
-        - data: The dataset to test for normality. Each row should represent observations while each
-            column should represent parameters. In the case of this program, this would mean each
-            row represents countries while each column represent indicators.
+        - data: The dataset to test for normality. Each row should represent observations, while
+            each column should represent parameters. In this program, each row represents countries,
+            and each column represents indicators.
     
     Returns: An array in which each element corresponds to the normality of the associated column.
         If it follows a normal distribution, the element will be `True`.
@@ -145,16 +145,15 @@ def test_for_normality(data: NDArray) -> List[bool]:
 
 def boxcox_transform(data: NDArray) -> NDArray:
     """
-    Transform the rows in the dataset where the data is not normal. The method makes the test
-    for normality.
+    Transform the rows in the dataset that are not normally distributed. The method performs the
+    normality test.
 
     Args:
         - data: The data to transform.
     
-    Returns: The transformed data where columns are replaced with their normalized values if they
-        do not follow a normal distribution and are unchanged if they do. If the data has not
-        been modified by the method, it means that all the variables are under a normal
-        distribution.
+    Returns: The transformed data where columns are replaced with their normalized values if they do
+        not follow a normal distribution and are unchanged if they do. If the data have not been
+        modified by the method, it means that all variables are normally distributed.
     """
 
     copied_data = copy(data)

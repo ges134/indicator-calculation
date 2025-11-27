@@ -1,5 +1,5 @@
 """
-This module gives constants that are used among multiple test files.
+This module provides constants used across multiple test files.
 """
 
 from numpy import array
