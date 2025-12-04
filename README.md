@@ -12,7 +12,7 @@ This software and its source code are given as supplementary material from the p
 
 The data used in the paper, which was computed with this program, is available as a dataset with the following complete reference:
 
-{{ DATASET REFERENCE TO BE ADDED }}
+Anglehart-Nunes, Jessy; Glaus, Mathias, 2025, "Dataset of A novel integrated objective-subjective weighting method using principal component analysis to correct correlation bias among criteria in sustainability decision making", https://doi.org/10.5683/SP3/NYKQXH, Borealis, VERSION PROVISOIRE, UNF:6:IWrDTTuFjH5uetnHcQTp/Q== [fileUNF]
 
 The README page gives information on the program usage. It starts with a get-started guide and a usage guide. This page then presents the program flow and the created subprograms.
 
