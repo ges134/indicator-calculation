@@ -12,7 +12,7 @@ Ce logiciel et son code source sont donnés comme matériel supplémentaire de l
 
 Les données utilisées dans l'article, qui sont calculées à l'aide de ce programme, sont disponibles comme jeu de données dans la référence suivante:
 
-{{ RÉFÉRENCE À AJOUTER }}
+Anglehart-Nunes, Jessy; Glaus, Mathias, 2025, "Dataset of A novel integrated objective-subjective weighting method using principal component analysis to correct correlation bias among criteria in sustainability decision making", https://doi.org/10.5683/SP3/NYKQXH, Borealis, VERSION PROVISOIRE, UNF:6:IWrDTTuFjH5uetnHcQTp/Q== [fileUNF]
 
 Ce LISEZMOI donne de l'information sur l'utilisation du programme. Elle présente un guide de prise en main et d'utilisation. Elle présente également l'exécution du programme et les sous-programmes créés.
 
