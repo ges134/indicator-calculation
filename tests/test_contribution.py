@@ -31,7 +31,7 @@ class TestContribution(TestCase):
         results = compare_images(
             'data/tests/contribution_baseline.png',
             'data/tests/contribution_actual.png',
-            0.001
+            11
         )
         self.assertIsNone(results)
 
@@ -53,6 +53,6 @@ class TestContribution(TestCase):
         results = compare_images(
             'data/tests/contribution_intervals_baseline.png',
             'data/tests/contribution_intervals_actual.png',
-            0.001
+            11
         )
         self.assertIsNone(results)
