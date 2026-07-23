@@ -177,6 +177,7 @@ class TestIndependance(TestCase):
         ]
 
         # Act
+        print(eigen_vectors)
         angle_matrix, independance_matrix = get_degrees_of_independance(eigen_vectors)
 
         # Assert
