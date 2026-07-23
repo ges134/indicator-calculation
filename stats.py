@@ -71,11 +71,11 @@ def apply_pca(data: NDArray) -> Tuple[NDArray, NDArray, NDArray]:
     correlation_matrix = corrcoef(copied_data.T)
     eigen_values, eigen_vectors = eig(correlation_matrix)
 
-    if any(eigenvalues.imag != 0):
+    if any(eigen_values.imag != 0):
         raise ValueError('There is some complex numbers')
 
-    eigenvalues = eigenvalues.real
-    eigenvectors = eigenvectors.real
+    eigen_values = eigen_values.real
+    eigen_vectors = eigen_vectors.real
 
     # Adjusting the eigenvectors (loadings) that are largest in absolute value to be positive
     max_abs_index = argmax(abs(eigen_vectors), axis=0)
