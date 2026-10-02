@@ -159,3 +159,30 @@ Le programme accomplit les étapes suivantes:
 3. Sauvegarder le `DataFrame`.
 
 Le fichier sauvegardé se nomme `monitored.csv` et suit le [format de Pandas de la fonction `compare`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.compare.html). En somme, si le fichier est vide, aucun changement n’a été reporté. Le `DataFrame` rapporte seulement les changements et est donc un sous-ensemble du fichier de fusion. Conséquemment, seulement les colonnes avec des indicateurs modifiés apparaitront dans le jeu de données de veille. Similairement, seulement des rangées avec des valeurs modifiées apparaitront dans le jeu de données de veille. Les colonnes représentent les indicateurs avec `reference` et `new`. Le premier fait référence au fichier de référence fourni pour l’exécution du programme tandis que la seconde fait référence aux données trouvées par l’exécution du programme. Le numéro de rangée apparait dans la première colonne pour faciliter le suivi des changements. `NaN` peut apparaitre dans le fichier pour indiquer qu’aucun changement n’a été observé pour cette rangée et cet indicateur.
+
+## Test des propriétés de la méthode
+
+Un sous-programme créé des données synthétiques pour démontrer l'adéquation mathématique de la méthode. Le programme peut être exécuté tel quel sans configuration supplémentaire. La commande suivante peut rouler le sous-programme.
+
+```sh
+pipenv run py properties.py
+```
+
+Le programme testera les propriétés suivantes:
+
+1. Deux critères parfaitement corrélés donnent un angle de 0 ou de 180 et un degré d'indépendance de 0.
+2. Deux critères parfaitement non corrélés donnent un angle de 90 et un degré d'indépendance de 1.
+3. Deux critères qui sont opposés dans leur coefficient de corrélation (r2 == -r1) donnent le même degré d'indépendance.
+4. Le réordonnancement des critères déplace les angles dans la matrice d'angle tout en préservant leurs valeurs.
+
+Toutes les valeurs sont affichées à l'écran et aucune donnée n'est sauvegardée.
+
+## Calcul du $\tau$ de Kendall
+
+Un sous-programme calcule le $\tau$ de Kendall entre deux classements. Les variables doivent être insérées dans le sous-programme. La commande suivante peut rouler le sous-programme:
+
+```sh
+pipenv run py rankings.py
+```
+
+Le $\tau$ de Kendall sera affiché à l'écran.

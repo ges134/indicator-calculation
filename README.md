@@ -159,3 +159,30 @@ The program will do the following:
 1. Save said dataset.
 
 The saved file is named `monitored.csv` and follows the [Pandas `compare` format](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.compare.html). In summary, if the file is empty, no changes were reported. If there is a change, the dataset will only reflect those changes. Hence, not all indicators or rows may be present in the monitored file. The changed indicators will appear with the indicator identifier and two columns, `reference` and `new`. The former refers to the reference dataset provided with the execution program, while the latter is the dataset associated with the current program execution. The row number appears as the first column, which can be used to track changes. `NaN` may appear to indicate that no changes were observed for this indicator in this row.
+
+## Assessing the method's properties
+
+A subprogram creates synthetic data to show that the method is mathematically sound. The subprogram can be run as-is without further configuration. The following command can run the subprogram:
+
+```sh
+pipenv run py properties.py
+```
+
+The program will test the following properties:
+
+1. Two perfectly correlated criteria give an angle of 0 or 180 and a degree of independence of 0.
+2. Two perfectly uncorrelated criteria give an angle of 90 and a degree of independence of 1.
+3. Two criteria that are the opposite in their correlation coefficient (r2 == -r1) give the same degree of independence.
+4. Reordering of criteria should only move the angles in the matrix while preserving the values.
+
+All values are displayed on the screen and no data is saved.
+
+## Computing Kendall's $\tau$
+
+A subprogram computes Kendall’s $\tau$ between two rankings. Insert the rankings as variables in the subprogram. The following command can run the subprogram:
+
+```sh
+pipenv run py rankings.py
+```
+
+Kendall's $\tau$ will be displayed on the screen.
