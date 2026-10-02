@@ -30,6 +30,8 @@ def lint_component():
         'stats.py',
         'confidence.py',
         'years.py',
+        'properties.py',
+        'rankings.py',
         'tests/constants.py',
         'tests/test_merger.py',
         'tests/test_independance.py',
